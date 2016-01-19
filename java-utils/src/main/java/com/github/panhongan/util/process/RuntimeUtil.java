@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pha.java.util.collection.CollectionUtil;
+import com.github.panhongan.util.collection.CollectionUtil;
 
 public class RuntimeUtil {
 	
