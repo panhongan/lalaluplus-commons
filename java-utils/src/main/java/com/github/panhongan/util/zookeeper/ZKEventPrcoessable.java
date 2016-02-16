@@ -2,7 +2,7 @@ package com.github.panhongan.util.zookeeper;
 
 import org.apache.zookeeper.WatchedEvent;
 
-public interface IZKEventHandler {
+public interface ZKEventPrcoessable {
 	
 	public void handleCreateEvent(WatchedEvent event);
 	

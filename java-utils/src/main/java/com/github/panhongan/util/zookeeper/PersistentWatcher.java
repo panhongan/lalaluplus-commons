@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.panhongan.util.thread.ControllableThread;
 
-public class PersistentWatcher extends ControllableThread implements SessionUpdatable {
+public class PersistentWatcher extends ControllableThread implements SessionHoldable {
 	
 	private static Logger logger = LoggerFactory.getLogger(PersistentWatcher.class);
 	
@@ -52,6 +52,11 @@ public class PersistentWatcher extends ControllableThread implements SessionUpda
 	@Override
 	public void set(ZooKeeper zk) {
 		this.zk = zk;
+	}
+	
+	@Override
+	public ZooKeeper get() {
+		return zk;
 	}
 	
 }

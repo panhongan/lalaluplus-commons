@@ -23,7 +23,11 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 	
 	private Watcher watcher = null;
 	
-	private Set<SessionUpdatable> session_subscribers = Collections.synchronizedSet(new HashSet<SessionUpdatable>());
+	private Set<SessionHoldable> session_holders = 
+			Collections.synchronizedSet(new HashSet<SessionHoldable>());
+	
+	private Set<SessionExceptionProcessable> session_exception_processors = 
+			Collections.synchronizedSet(new HashSet<SessionExceptionProcessable>());
 	
 	public ZookeeperSessionMonitor(String zk_host, int timeout, Watcher global_watcher) {
 		this.zk_host = zk_host;
@@ -35,20 +39,34 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 		return zk;
 	}
 	
-	public void addSubscriber(SessionUpdatable su) {
+	public void addSessionHolder(SessionHoldable su) {
 		if (su != null) {
-			session_subscribers.add(su);
+			session_holders.add(su);
 		}
 	}
 	
-	public void removeSubscriber(SessionUpdatable su) {
+	public void removeSessionHolder(SessionHoldable su) {
 		if (su != null) {
-			session_subscribers.remove(su);
+			session_holders.remove(su);
 		}
 	}
 	
-	public void clearSubscriber() {
-		session_subscribers.clear();
+	public void clearSessionHolder() {
+		session_holders.clear();
+	}
+	
+	public void addSessionExceptionPrcoessor(SessionExceptionProcessable processor) {
+		if (processor != null) {
+			session_exception_processors.add(processor);
+		}
+	}
+	
+	public void removeSessionExceptionProcessor(SessionExceptionProcessable processor) {
+		session_exception_processors.remove(processor);
+	}
+	
+	public void clearSessionExceptionProcessor() {
+		session_exception_processors.clear();
 	}
 	
 	@Override
@@ -67,7 +85,12 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 	@Override
 	public void uninit() {
 		super.uninit();
+		
 		ZKUtil.closeZK(zk);
+		zk = null;
+		
+		this.clearSessionExceptionProcessor();
+		this.clearSessionHolder();
 	}
 	
 	@Override
@@ -75,7 +98,7 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 		if (zk == null) {
 			zk = ZKUtil.connectZK(zk_host, timeout, watcher);
 			if (zk != null) {
-				this.notifySubscribers();
+				this.notifySessionUpdaters();
 			}
 		}
 		
@@ -85,18 +108,26 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
-			logger.warn("Exception class : " + e.getClass().getName());
+			logger.warn("Exception class : %s", e.getClass().getName());
+			
+			this.processConnectionException();
 			
 			ZKUtil.closeZK(zk);
 			zk = null;
 		}
 	}
 	
-	private void notifySubscribers() {
+	private void notifySessionUpdaters() {
 		if (zk != null) {
-			for (SessionUpdatable ss : session_subscribers) {
-				ss.set(zk);
+			for (SessionHoldable sh : session_holders) {
+				sh.set(zk);
 			}
+		}
+	}
+	
+	private void processConnectionException() {
+		for (SessionExceptionProcessable sep : session_exception_processors) {
+			sep.process();
 		}
 	}
 
