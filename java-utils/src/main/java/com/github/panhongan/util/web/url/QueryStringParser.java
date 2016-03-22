@@ -13,9 +13,15 @@ public class QueryStringParser {
 	
 	private static final Logger logger = LoggerFactory.getLogger(QueryStringParser.class);
 	
-	public static Map<String, String> parse(String queryString) {
+	public static Map<String, String> parse(String url) {
 		Map<String, String> paramMap = new HashMap<String, String>();
-		StringTokenizer st = new StringTokenizer(queryString, "&");
+		int begin_pos = url.indexOf('?') + 1;
+		int end_pos = url.indexOf('#', begin_pos);
+		if (end_pos == -1) {
+			end_pos = url.length();
+		}
+		
+		StringTokenizer st = new StringTokenizer(url.substring(begin_pos, end_pos), "&");
         while (st.hasMoreTokens()) {
             String pairs = st.nextToken();
             int pos = pairs.indexOf('=');

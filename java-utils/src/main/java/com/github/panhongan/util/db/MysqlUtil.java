@@ -93,6 +93,12 @@ public class MysqlUtil {
 		}
 	}
 	
+	public static void closeMysqlSession(MysqlSession session) {
+		if (session != null) {
+			session.disconnect();
+		}
+	}
+	
 	public static String getJDBCUrl(String server, int port, String db, String charset) {
 		return ("jdbc:mysql://" 
 				+ server + ":"+ port  + "/" + db
