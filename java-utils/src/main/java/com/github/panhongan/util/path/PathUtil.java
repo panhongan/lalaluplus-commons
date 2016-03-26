@@ -44,5 +44,15 @@ public class PathUtil {
 		
 		return list;
 	}
+	
+	public static void createRecursiveDir(String dir) {
+		try {
+			File file = new File(dir);
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+		} catch (Exception e) {
+		}
+	}
 
 }

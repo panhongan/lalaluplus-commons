@@ -1,7 +1,8 @@
-package com.github.panhongan.util.db;
+package com.github.panhongan.util.mq.kafka;
 
 import kafka.api.PartitionOffsetRequestInfo;
 import kafka.common.TopicAndPartition;
+import kafka.consumer.ConsumerConfig;
 import kafka.javaapi.*;
 import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.javaapi.producer.Producer;
@@ -142,6 +143,23 @@ public class KafkaUtil {
 		}
 		
 		return ret;
+    }
+    
+    public static int sendData(Producer<String, String> producer, String topic, String data) {
+		List<String> datas = new ArrayList<String>();
+		datas.add(data);
+		
+		return KafkaUtil.sendBatch(producer, topic, datas);
+    }
+    
+    public static ConsumerConfig createConsumerConfig(String zk_list, String group_id) {
+        Properties props = new Properties();
+        props.put("zookeeper.connect", zk_list);
+        props.put("group.id", group_id);
+        props.put("zookeeper.session.timeout.ms", "30000");
+        props.put("zookeeper.sync.time.ms", "2000");
+        props.put("auto.commit.interval.ms", "1000");
+        return new ConsumerConfig(props);
     }
     
 }
