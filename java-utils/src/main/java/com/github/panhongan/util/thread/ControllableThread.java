@@ -27,11 +27,7 @@ public abstract class ControllableThread extends Thread implements Lifecycleable
 	}
 	
 	public void setSleepInterval(int sleep_interval) {
-		if (sleep_interval < 0) {
-			this.sleep_interval = 1000;
-		} else {
-			this.sleep_interval = sleep_interval;
-		}
+		this.sleep_interval = sleep_interval;
 	}
 	
 	@Override
@@ -42,10 +38,12 @@ public abstract class ControllableThread extends Thread implements Lifecycleable
 			}
 			
 			// sleep
-			try {
-				Thread.sleep(sleep_interval);
-			} catch (Exception e) {
-				logger.warn(e.getMessage());
+			if (this.sleep_interval > 0) {
+				try {
+					Thread.sleep(sleep_interval);
+				} catch (Exception e) {
+					logger.warn(e.getMessage());
+				}
 			}
 		}
 	}

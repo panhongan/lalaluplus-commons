@@ -66,6 +66,23 @@ public class MysqlUtil {
 		return conn;
 	}
 	
+	public static Connection createConnection(Config conf) {
+		Connection conn = null;
+		
+		try {
+			conn = MysqlUtil.createConnection(conf.getString("mysql.server"), 
+					conf.getInt("mysql.port"), 
+					conf.getString("mysql.db"), 
+					conf.getString("mysql.user"), 
+					conf.getString("mysql.password"), 
+					conf.getString("mysql.charset"));
+		 } catch (Exception e) {
+			 logger.warn(e.getMessage(), e);
+		 }
+		
+		return conn;
+	}
+	
 	public static void closeConnection(Connection conn) {
 		if (conn != null) {
 			try {

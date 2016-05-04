@@ -17,13 +17,12 @@ public class Config {
 	
 	private Map<String, String> key_values = new HashMap<String, String>();
 	
-	public boolean parse(String confFile) {
+	private boolean parseExec(String conf_file) {
 		boolean ret = false;
-		
 		BufferedReader br = null;
 		
 		try {
-			br = new BufferedReader(new FileReader(confFile));
+			br = new BufferedReader(new FileReader(conf_file));
 
 			String line = null;
 			while ((line = br.readLine()) != null) {
@@ -54,6 +53,19 @@ public class Config {
 		}
 		
 		return ret;
+	}
+	
+	public boolean parse(String conf_file) {
+		key_values.clear();
+		return this.parseExec(conf_file);
+	}
+	
+	public boolean addConf(String conf_file) {
+		return this.parseExec(conf_file);
+	}
+	
+	public Map<String, String> getProperties() {
+		return key_values;
 	}
 	
 	public String getString(String key) {

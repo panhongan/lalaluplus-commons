@@ -1,6 +1,8 @@
 package com.github.panhongan.util.db;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;
 
+import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.ShardedJedis;
@@ -45,6 +49,53 @@ public class JedisUtil {
 			}
 		}
 		*/
+	}
+	
+	// one HostAndPort is ok
+	public static JedisCluster createJedisCluster(Config conf) {
+		JedisCluster jedis_cluster = null;
+		
+		try {
+			Set<HostAndPort> nodes = new HashSet<HostAndPort>();
+			nodes.add(new HostAndPort(conf.getString("redis.server"),
+					conf.getInt("redis.port")));
+			jedis_cluster = new JedisCluster(nodes);
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
+		}
+		
+		return jedis_cluster;
+	}
+	
+	public static JedisCluster createJedisCluster(String redis_conf_file) {
+		Config conf = new Config();
+		conf.parse(redis_conf_file);
+		return JedisUtil.createJedisCluster(conf);
+	}
+	
+	public static Jedis createJedis(Config conf) {
+		Jedis jedis = null;
+		
+		try {
+			jedis = new Jedis(conf.getString("redis.server"),
+					conf.getInt("redis.port"));
+			String passwd = conf.getString("redis.password");
+			if (!StringUtil.isEmpty(passwd)) {
+				jedis.auth(passwd);
+			}
+			
+			jedis.connect();
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
+		}
+		
+		return jedis;
+	}
+	
+	public static Jedis createJedis(String redis_conf_file) {
+		Config conf = new Config();
+		conf.parse(redis_conf_file);
+		return JedisUtil.createJedis(conf);
 	}
 	
 	public static Pool<Jedis> createJedisPool(Config conf) {
@@ -146,6 +197,26 @@ public class JedisUtil {
 		}
 		
 		return ret;
+	}
+	
+	public static void closeJedis(Jedis jedis) {
+		if (jedis != null) {
+			try {
+				jedis.disconnect();
+			} catch (Exception e) {
+				logger.warn(e.getMessage(), e);
+			}
+		}
+	}
+	
+	public static void closeJedisCluster(JedisCluster jedis_cluster) {
+		if (jedis_cluster != null) {
+			try {
+				jedis_cluster.close();
+			} catch (Exception e) {
+				logger.warn(e.getMessage(), e);
+			}
+		}
 	}
 	
 	public static void closeJedisPool(Pool<Jedis> pool) {
