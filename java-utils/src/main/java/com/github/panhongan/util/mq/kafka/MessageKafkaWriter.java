@@ -20,6 +20,11 @@ public class MessageKafkaWriter extends AbstractMessageProcessor implements Life
 	
 	private Producer<String, String> producer = null;
 	
+	/**
+	 * @param zk_list
+	 * @param broker_list
+	 */
+	
 	public MessageKafkaWriter(String zk_list, String broker_list) {
 		this.zk_list = zk_list;
 		this.broker_list = broker_list;
@@ -27,7 +32,7 @@ public class MessageKafkaWriter extends AbstractMessageProcessor implements Life
 	
 	@Override
 	public boolean init() {
-		producer = KafkaUtil.createProducer(zk_list, broker_list, true);
+		producer = KafkaUtil.createProducer(zk_list, broker_list, false);
 		return (producer != null);
 	}
 	
@@ -43,10 +48,10 @@ public class MessageKafkaWriter extends AbstractMessageProcessor implements Life
 			logger.warn("send message to kafka failed : {}", message);
 			KafkaUtil.closeProducer(producer);
 			
-			producer = KafkaUtil.createProducer(zk_list, broker_list, true);
+			producer = KafkaUtil.createProducer(zk_list, broker_list, false);
 			ret = KafkaUtil.sendData(producer, topic, message);
 		}
-		
+
 		return (ret == 0);
 	}
 	
