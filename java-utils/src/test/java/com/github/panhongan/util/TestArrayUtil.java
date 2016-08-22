@@ -1,5 +1,7 @@
 package com.github.panhongan.util;
 
+import com.github.panhongan.util.collection.ArrayUtil;
+
 public class TestArrayUtil {
 	
 	public static void main(String [] args) {

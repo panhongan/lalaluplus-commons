@@ -19,7 +19,7 @@ public class MapReduceTaskXmlParser {
 			Element element = document.getRootElement();
 			
 			for(Iterator i = element.elementIterator("property");
-					i.hasNext();){  
+					i.hasNext();){
 				//获取节点元素  
 				element = (org.dom4j.Element)i.next();  
 				String name = element.elementText("name");  

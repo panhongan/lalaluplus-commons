@@ -152,14 +152,23 @@ public class KafkaUtil {
 		return KafkaUtil.sendBatch(producer, topic, datas);
     }
     
-    public static ConsumerConfig createConsumerConfig(String zk_list, String group_id) {
+    public static ConsumerConfig createConsumerConfig(String zk_list, String group_id, boolean from_beginning) {
         Properties props = new Properties();
         props.put("zookeeper.connect", zk_list);
         props.put("group.id", group_id);
+        props.put("auto.offset.reset", (from_beginning ? "smallest" : "largest"));
         props.put("zookeeper.session.timeout.ms", "30000");
         props.put("zookeeper.sync.time.ms", "2000");
         props.put("auto.commit.interval.ms", "1000");
         return new ConsumerConfig(props);
+    }
+    
+    public static String getConsumerGroupOwnerZKNode(String groupid, String topic) {
+    	return "/consumers/" + groupid + "/owners/" + topic;
+    }
+    
+    public static String getConsumerGroupOffsetZKNode(String groupid, String topic) {
+    	return "/consumers/" + groupid + "/offsets/" + topic;
     }
     
 }

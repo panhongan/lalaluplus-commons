@@ -1,6 +1,7 @@
 package com.github.panhongan.util.mq.kafka;
 
 import com.github.panhongan.util.control.Lifecycleable;
+import com.github.panhongan.util.zookeeper.ZKUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,12 +35,16 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 	
 	private int partition = 0;
 	
-	public HighLevelConsumerGroup(String zk_list, String group_id, 
-			String topic, int partition, List<AbstractMessageProcessor> msg_processors) {
+	private boolean restart_offset_largest = true;
+	
+	public HighLevelConsumerGroup(String zk_list, String group_id,
+			String topic, int partition, boolean restart_offset_largest,
+			List<AbstractMessageProcessor> msg_processors) {
 		this.zk_list = zk_list;
 		this.group_id = group_id;
 		this.topic = topic;
 		this.partition = partition;
+		this.restart_offset_largest = restart_offset_largest;
 		this.msg_processors = msg_processors;
 		
 		assert(partition == msg_processors.size());
@@ -50,8 +55,14 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 		boolean is_ok = false;
 		
 		try {
+			if (restart_offset_largest) {
+				String zk_node = KafkaUtil.getConsumerGroupOffsetZKNode(group_id, topic);
+				ZKUtil.deleteNode(zk_list, zk_node);
+				logger.info("delete kafka consumer group offset node: {}", zk_node);
+			}
+			
 			consumer = Consumer.createJavaConsumerConnector(
-	                KafkaUtil.createConsumerConfig(zk_list, group_id));
+	                KafkaUtil.createConsumerConfig(zk_list, group_id, false));
 			Map<String, Integer> topic_partitions = new HashMap<String, Integer>();
 			topic_partitions.put(topic, partition);
 	        Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumer.createMessageStreams(topic_partitions);

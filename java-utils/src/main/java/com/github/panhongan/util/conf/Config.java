@@ -2,6 +2,7 @@ package com.github.panhongan.util.conf;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import com.github.panhongan.util.StringUtil;
 
 
-public class Config {
-	
+public class Config implements Serializable {
+
+	private static final long serialVersionUID = 3641484340330072531L;
+
 	private static Logger logger = LoggerFactory.getLogger(Config.class);
 	
 	private Map<String, String> key_values = new HashMap<String, String>();
@@ -62,6 +65,12 @@ public class Config {
 	
 	public boolean addConf(String conf_file) {
 		return this.parseExec(conf_file);
+	}
+	
+	public void setProperty(String key, String value) {
+		if (key != null && value != null) {
+			key_values.put(key, value);
+		}
 	}
 	
 	public Map<String, String> getProperties() {

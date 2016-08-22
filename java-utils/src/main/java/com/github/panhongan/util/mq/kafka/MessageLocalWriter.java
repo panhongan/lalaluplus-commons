@@ -93,7 +93,7 @@ public class MessageLocalWriter extends AbstractMessageProcessor {
 	
 	protected String constructFileName(String topic, int partition_id) {
 		String begin_time = TimeUtil.getTimeSectionByMinute(TimeUtil.currTime(), 10, "yyyyMMdd_HHmm").beginTime;
-		String local_path = data_dir + "/" + topic;
+		String local_path = data_dir;
 		PathUtil.createRecursiveDir(local_path);
 			
 		String local_file = local_path + "/" + topic + "_" + partition_id + "_" + begin_time;

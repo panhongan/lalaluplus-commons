@@ -143,6 +143,14 @@ public class ZKUtil {
 		}
 	}
 	
+	public static void deleteNode(String zk_host, String path) {
+		ZooKeeper zk = ZKUtil.connectZK(zk_host, 30 * 1000, null);
+		if (zk != null) {
+			ZKUtil.deleteNode(zk, path);
+			ZKUtil.closeZK(zk);
+		}
+	}
+	
 	public static void deleteNodeRecursively(ZooKeeper zk, String path) {
 		List<String> path_list = PathUtil.recursivePathList(path);
 		if (zk != null && !CollectionUtil.isEmpty(path_list)) {
@@ -157,7 +165,7 @@ public class ZKUtil {
 		
 		if (zk != null) {
 			try {
-				zk.exists("/abc", false);
+				zk.exists("/155d392f35b0005", false);
 				ret = true;
 			} catch (Exception e) {
 			}

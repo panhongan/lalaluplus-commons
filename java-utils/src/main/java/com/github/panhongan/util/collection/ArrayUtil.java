@@ -1,4 +1,4 @@
-package com.github.panhongan.util;
+package com.github.panhongan.util.collection;
 
 public class ArrayUtil {
 	

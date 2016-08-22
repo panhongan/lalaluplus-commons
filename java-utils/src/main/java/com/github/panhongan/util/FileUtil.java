@@ -38,5 +38,37 @@ public class FileUtil {
 		
 		return list;
 	}
+	
+	public static void readFile(String file, LineProcessor processor) {
+		if (processor == null) {
+			logger.warn("invalid parameter : processor");
+			return;
+		}
+		
+		BufferedReader br = null;
+		
+		try {
+			br = new BufferedReader(new FileReader(file));
+			String line = null;
+			
+			while ((line = br.readLine()) != null) {
+				processor.process(line);
+			}
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (Exception e) {
+					
+				}
+			}
+		}
+	}
+	
+	public static interface LineProcessor {
+		public void process(String line);
+	}
 
 }

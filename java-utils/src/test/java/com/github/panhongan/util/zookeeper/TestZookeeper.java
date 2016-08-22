@@ -32,16 +32,15 @@ class MyWatcher implements Watcher {
 
 public class TestZookeeper {
 	public static void main(String [] args) {
-		String path = "/pha12345/abc";
 		ZooKeeper zk = null;
 		
 		try {
-			zk = ZKUtil.connectZK("localhost:2181,localhost:2182,localhost:2183", 30000, new MyWatcher());
+			zk = ZKUtil.connectZK("localhost:2181,localhost:2182,localhost:2183", 30 * 1000, new MyWatcher());
 			if (zk != null) {
 				System.out.println("zk connected");
 				
 				// pha1
-				path = "/pha1";
+				String path = "/pha3";
 				if (zk.exists(path, true) != null) {
 					zk.delete(path, -1);
 				}
@@ -54,7 +53,7 @@ public class TestZookeeper {
 			
 	
 				path = zk.create(path, "test_pha".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-				System.out.println(new String(zk.getData(path, true, null)));
+				System.out.println("***"+new String(zk.getData(path, true, null)));
 				
 				zk.setData(path, "22".getBytes(), -1);
 				System.out.println(new String(zk.getData(path, true, null)));

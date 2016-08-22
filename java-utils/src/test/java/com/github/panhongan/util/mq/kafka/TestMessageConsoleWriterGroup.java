@@ -39,7 +39,7 @@ public class TestMessageConsoleWriterGroup {
 		
 		HighLevelConsumerGroup group = new HighLevelConsumerGroup(config.getString("zk.list"), 
 				config.getString("kafka.consumer.group"), 
-				topic, partitions, processors);
+				topic, partitions, true, processors);
 		
 		if (group.init()) {
 			logger.info("HighLevelConsumerGroup init ok");
