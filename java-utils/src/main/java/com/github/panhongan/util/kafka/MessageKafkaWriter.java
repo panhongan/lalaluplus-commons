@@ -1,4 +1,4 @@
-package com.github.panhongan.util.mq.kafka;
+package com.github.panhongan.util.kafka;
 
 import java.util.List;
 

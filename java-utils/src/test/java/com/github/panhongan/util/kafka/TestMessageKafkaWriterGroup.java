@@ -1,4 +1,4 @@
-package com.github.panhongan.util.mq.kafka;
+package com.github.panhongan.util.kafka;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.panhongan.util.conf.Config;
-import com.github.panhongan.util.mq.kafka.AbstractMessageProcessor;
-import com.github.panhongan.util.mq.kafka.HighLevelConsumerGroup;
-import com.github.panhongan.util.mq.kafka.MessageKafkaWriter;
+import com.github.panhongan.util.kafka.AbstractMessageProcessor;
+import com.github.panhongan.util.kafka.HighLevelConsumerGroup;
+import com.github.panhongan.util.kafka.MessageKafkaWriter;
 
 
 public class TestMessageKafkaWriterGroup {

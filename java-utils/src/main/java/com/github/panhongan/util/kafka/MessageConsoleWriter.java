@@ -1,9 +1,9 @@
-package com.github.panhongan.util.mq.kafka;
+package com.github.panhongan.util.kafka;
 
 
 import java.util.List;
 
-import com.github.panhongan.util.mq.kafka.AbstractMessageProcessor;
+import com.github.panhongan.util.kafka.AbstractMessageProcessor;
 
 
 public class MessageConsoleWriter extends AbstractMessageProcessor {

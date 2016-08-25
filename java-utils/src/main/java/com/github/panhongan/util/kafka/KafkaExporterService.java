@@ -1,4 +1,4 @@
-package com.github.panhongan.util.mq.kafka;
+package com.github.panhongan.util.kafka;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.github.panhongan.util.mq.kafka;
+package com.github.panhongan.util.kafka;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,15 +7,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.panhongan.util.conf.Config;
-import com.github.panhongan.util.mq.kafka.AbstractMessageProcessor;
-import com.github.panhongan.util.mq.kafka.HighLevelConsumerGroup;
+import com.github.panhongan.util.kafka.AbstractMessageProcessor;
+import com.github.panhongan.util.kafka.HighLevelConsumerGroup;
+import com.github.panhongan.util.kafka.MessageLocalWriter;
 
-public class TestMessageConsoleWriterGroup {
+
+public class TestMessageLocalWriterGroup {
 	
-	private static final Logger logger = LoggerFactory.getLogger(TestMessageConsoleWriterGroup.class);
+	private static final Logger logger = LoggerFactory.getLogger(TestMessageLocalWriterGroup.class);
 	
 	public static void main(String [] args) {
-		// zk.list, kafka.consumer.group
+		// local.data.dir, zk.list, kafka.consumer.group
 		String conf_file = "../conf/kafka.properties";
 		Config config = new Config();
 		if (!config.parse(conf_file)) {
@@ -28,17 +30,16 @@ public class TestMessageConsoleWriterGroup {
 		String topic = "test";
 		int partitions = 4;
 		
-		// console writer
 		List<AbstractMessageProcessor> processors = new ArrayList<AbstractMessageProcessor>();
 		for (int i = 0; i < partitions; ++i) {
-			MessageConsoleWriter console_writer = new MessageConsoleWriter();
-			if (console_writer.init()) {
-				processors.add(console_writer);
+			MessageLocalWriter local_writer = new MessageLocalWriter(config.getString("local.data.dir"));
+			if (local_writer.init()) {
+				processors.add(local_writer);
 			}
 		}
 		
 		HighLevelConsumerGroup group = new HighLevelConsumerGroup(config.getString("zk.list"), 
-				config.getString("kafka.consumer.group"), 
+				config.getString("kafka.consumer.group"),
 				topic, partitions, true, processors);
 		
 		if (group.init()) {
@@ -48,7 +49,7 @@ public class TestMessageConsoleWriterGroup {
 		}
 		
 		try {
-			Thread.sleep(60 * 1000);
+			Thread.sleep(5 * 60 * 1000);
 		} catch (Exception e) {
 		}
 		
