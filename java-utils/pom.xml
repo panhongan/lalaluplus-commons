@@ -4,7 +4,7 @@
 
 	<groupId>com.github.panhongan</groupId>
 	<artifactId>java-utils</artifactId>
-	<version>0.0.7</version>
+	<version>0.0.8</version>
 	<packaging>jar</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -31,7 +31,7 @@
 		<connection>https://github.com/panhongan/java-utils.git</connection>
 		<developerConnection>https://github.com/panhongan/java-utils.git</developerConnection>
 		<url>https://github.com/panhongan/java-utils</url>
-		<tag>v0.0.6</tag>
+		<tag>v0.0.8</tag>
 	</scm>
 
 	<distributionManagement>
@@ -157,13 +157,13 @@
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka_2.10</artifactId>
-			<version>0.9.0.0</version>
+			<version>0.8.2.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-clients</artifactId>
-			<version>0.9.0.0</version>
+			<version>0.8.2.2</version>
 		</dependency>
 
 		<dependency>
