@@ -7,8 +7,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.panhongan.util.Pair;
 import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;
+import com.github.panhongan.util.uri.ServerURI;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
@@ -57,8 +59,11 @@ public class JedisUtil {
 		
 		try {
 			Set<HostAndPort> nodes = new HashSet<HostAndPort>();
-			nodes.add(new HostAndPort(conf.getString("redis.server"),
-					conf.getInt("redis.port")));
+		
+			for (Pair<String, Integer> pair : ServerURI.parse(conf.getString("redis.servers"))) {
+				nodes.add(new HostAndPort(pair.first, pair.second));
+			}
+			
 			jedis_cluster = new JedisCluster(nodes);
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
@@ -77,8 +82,8 @@ public class JedisUtil {
 		Jedis jedis = null;
 		
 		try {
-			jedis = new Jedis(conf.getString("redis.server"),
-					conf.getInt("redis.port"));
+			List<Pair<String, Integer>> nodes = ServerURI.parse(conf.getString("redis.servers"));
+			jedis = new Jedis(nodes.get(0).first, nodes.get(0).second);
 			String passwd = conf.getString("redis.password");
 			if (!StringUtil.isEmpty(passwd)) {
 				jedis.auth(passwd);
@@ -108,8 +113,9 @@ public class JedisUtil {
 		Pool<Jedis> pool = null;
 		
 		try {
-			String redis_server = conf.getString("redis.server");
-			int redis_port = conf.getInt("redis.port");
+			List<Pair<String, Integer>> nodes = ServerURI.parse(conf.getString("redis.servers"));
+			String redis_server = nodes.get(0).first;
+			int redis_port = nodes.get(0).second;
 			String redis_passwd = conf.getString("redis.password");
 			int connection_timeout = conf.getInt("redis.connection.timeout", 10 * 1000);
 			if (StringUtil.isEmpty(redis_passwd)) {
