@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,18 +65,35 @@ public class Config implements Serializable {
 		return this.parseExec(conf_file);
 	}
 	
+	public boolean parseResourceFile(String resource_file) {
+		key_values.clear();
+		boolean ret = false;
+		
+	    Properties prop = new Properties();
+
+	    try {
+	      prop.load(this.getClass().getResourceAsStream(resource_file));
+	      for (Object key : prop.keySet()) {
+	    	  String str_key = (String)key;
+	    	  this.addProperty(str_key, (String)prop.getProperty(str_key));
+	      }
+	      
+	      ret = true;
+	    } catch (Exception e) {
+	      logger.warn(e.getMessage(), e);
+	    }
+	    
+	    return ret;
+	}
+	
 	public boolean addConf(String conf_file) {
 		return this.parseExec(conf_file);
 	}
 	
-	public void setProperty(String key, String value) {
+	public void addProperty(String key, String value) {
 		if (key != null && value != null) {
 			key_values.put(key, value);
 		}
-	}
-	
-	public Map<String, String> getProperties() {
-		return key_values;
 	}
 	
 	public String getString(String key) {
@@ -179,8 +198,16 @@ public class Config implements Serializable {
 		return ret;
 	}
 	
-	public int propertyCount() {
+	public int size() {
 		return key_values.size();
+	}
+	
+	public boolean isEmpty() {
+		return key_values.isEmpty();
+	}
+	
+	public Set<String> keySet() {
+		return key_values.keySet();
 	}
 	
 	@Override
