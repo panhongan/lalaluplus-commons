@@ -36,11 +36,13 @@ public class Config implements Serializable {
 					continue;
 				}
 				
-				String [] arr = line.split("=");
-				if (arr != null && arr.length == 2) {
-					String key = arr[0].trim();
-					String value = arr[1].trim();
+				int pos = line.indexOf('=');
+				if (pos != -1) {
+					String key = line.substring(0, pos).trim();
+					String value = line.substring(pos + 1).trim();
 					key_values.put(key, value);
+				} else {
+					logger.warn("invalid line : {}", line);
 				}
 			}
 			

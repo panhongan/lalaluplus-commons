@@ -1,4 +1,4 @@
-package com.github.panhongan.util.db;
+package com.github.panhongan.util.hive;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,18 +11,17 @@ import org.slf4j.LoggerFactory;
 import com.github.panhongan.util.sql.SqlUtil;
 
 
-public class MysqlSession {
+public class HiveSession {
 	
-	private static final Logger logger = LoggerFactory.getLogger(MysqlSession.class);
+	private static final Logger logger = LoggerFactory.getLogger(HiveSession.class);
 	
 	private Connection conn = null;
 	
 	private Statement stmt = null;
 	
-	public MysqlSession(Connection connection) throws SQLException {
+	public HiveSession(Connection connection) throws SQLException {
 		this.conn = connection;
-		stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-				ResultSet.CONCUR_UPDATABLE);
+		stmt = conn.createStatement();
 	}
 	
 	public ResultSet executeQuery(String sql) {

@@ -1,30 +1,27 @@
 package com.github.panhongan.util.db;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.panhongan.util.conf.Config;
+import com.github.panhongan.util.sql.SqlUtil;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class MysqlUtil {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MysqlUtil.class);
 	
-	private static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
+	public static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
 	
-	private static final String DATA_SOURCE_NAME = "mysql_connection_pool";
-	
-	private static int pool_id = 0;
+	public static final String SOURCE_TYPE = "mysql";
 	
 	public static MysqlPool createMysqlPool(Config conf) {
 		MysqlPool pool = new MysqlPool();
-		if (!pool.createInnerPool(conf)) {
-			pool.closeInnerPool();
+		if (!pool.create(conf)) {
+			pool.close();
 			pool = null;
 		}
 		
@@ -46,96 +43,42 @@ public class MysqlUtil {
 	
 	public static void closeMysqlPool(MysqlPool pool) {
 		if (pool != null) {
-			pool.closeInnerPool();
+			pool.close();
 		}
 	}
 	
-	public static Connection createConnection(String server, int port, String db, 
-			String user, String passwd, String charset) {
-		Connection conn = null;
-
-		try {
-			Class.forName(MYSQL_DRIVER);
-			DriverManager.setLoginTimeout(60);
-			conn = DriverManager.getConnection(MysqlUtil.getJDBCUrl(server, port, db, charset), 
-					user, passwd);
-		} catch (Exception e) {
-			logger.warn(e.getMessage());
-		}
-		
-		return conn;
+	public static MysqlSession createMysqlSession(String mysql_conf_file) throws SQLException {
+		Config conf = new Config();
+		conf.parse(mysql_conf_file);
+		return new MysqlSession(SqlUtil.createConnection(conf));
 	}
 	
-	public static Connection createConnection(Config conf) {
-		Connection conn = null;
-		
-		try {
-			conn = MysqlUtil.createConnection(conf.getString("mysql.server"), 
-					conf.getInt("mysql.port"), 
-					conf.getString("mysql.db"), 
-					conf.getString("mysql.user"), 
-					conf.getString("mysql.password"), 
-					conf.getString("mysql.charset"));
-		 } catch (Exception e) {
-			 logger.warn(e.getMessage(), e);
-		 }
-		
-		return conn;
-	}
-	
-	public static void closeConnection(Connection conn) {
-		if (conn != null) {
-			try {
-				conn.close();
-			} catch (Exception e) {
-			}
-		}
-	}
-	
-	public static void closeStatement(Statement stmt) {
-		if (stmt != null) {
-			try {
-				stmt.close();
-			} catch (Exception e) {
-			}
-		}
-	}
-	
-	public static void closeResultSet(ResultSet rs) {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (Exception e) {
-			}
-		}
+	public static MysqlSession createMysqlSession(Config conf) throws SQLException {
+		return new MysqlSession(SqlUtil.createConnection(conf));
 	}
 	
 	public static void closeMysqlSession(MysqlSession session) {
 		if (session != null) {
-			session.disconnect();
+			session.close();
 		}
-	}
-	
-	public static String getJDBCUrl(String server, int port, String db, String charset) {
-		return ("jdbc:mysql://" 
-				+ server + ":"+ port  + "/" + db
-				+ "?socketTimeout=300000&characterEncoding=" + charset);
 	}
 	
 	// class MysqlPool
 	public static class MysqlPool {
 		
+		private static final String DATA_SOURCE_NAME = "mysql_connection_pool";
+		
 		private ComboPooledDataSource pool = null;
 		
-		public boolean createInnerPool(Config conf) {
+		public boolean create(Config conf) {
 			try {
-				String server = conf.getString("mysql.server");
-				int port = conf.getInt("mysql.port");
-				String db = conf.getString("mysql.db");
-				String user = conf.getString("mysql.user");
-				String passwd = conf.getString("mysql.password");
-				String charset = conf.getString("mysql.charset", "utf8");
-				int timeout = conf.getInt("mysql.login.timeout", 60);
+				String server = conf.getString("sql.server");
+				int port = conf.getInt("sql.port");
+				String db = conf.getString("sql.db");
+				String user = conf.getString("sql.user");
+				String passwd = conf.getString("sql.password");
+				String charset = conf.getString("sql.charset", "utf8");
+				int timeout = conf.getInt("sql.login.timeout", 60);
 				
 				int min_pool_size = conf.getInt("min.pool.size", 10);
 				int max_pool_size = conf.getInt("max.pool.size", 20);
@@ -144,8 +87,8 @@ public class MysqlUtil {
 				int max_idle_time = conf.getInt("max.idle.time", 300);
 				
 				pool = new ComboPooledDataSource(true);
-				pool.setDataSourceName(DATA_SOURCE_NAME + "_" + (pool_id++));
-				pool.setJdbcUrl(MysqlUtil.getJDBCUrl(server, port, db, charset));
+				pool.setDataSourceName(DATA_SOURCE_NAME + "_" + System.currentTimeMillis());
+				pool.setJdbcUrl(SqlUtil.getJDBCUrl(SOURCE_TYPE, server, port, db, charset));
 				pool.setLoginTimeout(timeout);
 				pool.setDriverClass(MYSQL_DRIVER); 
 				pool.setUser(user);
@@ -158,24 +101,30 @@ public class MysqlUtil {
 				pool.setTestConnectionOnCheckout(true);
 				pool.setAutoCommitOnClose(true);
 				
-				if (!MysqlPool.validatePool(pool)) {
-					this.closeInnerPool();
+				if (!this.validatePool(pool)) {
+					this.close();
 					pool = null;
 				}
 			} catch (Exception e) {
 				logger.warn(e.getMessage());
-				this.closeInnerPool();
+				this.close();
 				pool = null;
 			}
 			
 			return (pool != null);
 		}
 		
-		public ComboPooledDataSource getInnerPool() {
-			return pool;
+		public Connection getConnection() {
+			Connection conn = null;
+			try {
+				conn = pool.getConnection();
+			} catch (Exception e) {
+				logger.warn(e.getMessage(), e);
+			}
+			return conn;
 		}
 		
-		public void closeInnerPool() {
+		public void close() {
 			if (pool != null) {
 				try {
 					pool.close();
@@ -184,9 +133,8 @@ public class MysqlUtil {
 				}
 			}
 		}
-		
-		
-		public static boolean validatePool(ComboPooledDataSource pool) {
+
+		private boolean validatePool(ComboPooledDataSource pool) {
 			boolean is_valid = false;
 			
 			if (pool != null) {
@@ -199,6 +147,7 @@ public class MysqlUtil {
 				} catch (Exception e) {
 					logger.warn(e.getMessage());
 				} finally {
+					SqlUtil.closeConnection(conn);
 				}
 			}
 			

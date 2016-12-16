@@ -8,6 +8,7 @@ import com.github.panhongan.util.conf.Config;
 import com.github.panhongan.util.db.MysqlSession;
 import com.github.panhongan.util.db.MysqlUtil;
 import com.github.panhongan.util.db.MysqlUtil.MysqlPool;
+import com.github.panhongan.util.sql.SqlUtil;
 
 public class TestMysqlUtil {
 	
@@ -23,17 +24,17 @@ public class TestMysqlUtil {
 		MysqlPool pool = MysqlUtil.createMysqlPool(config);
 		if (pool != null) {
 			try {
-				Connection conn = pool.getInnerPool().getConnection();
+				Connection conn = pool.getConnection();
 				System.out.println(StringUtil.toString(conn));
 				
 				MysqlSession session = new MysqlSession(conn);
-				String sql = "select * from t_article_profile limit 1;";
+				String sql = "select * from t_history_task limit 1";
 				ResultSet rs = session.executeQuery(sql);
 				while (rs.next()) {
 					System.out.println(rs.getString(2));
 				}
 				
-				MysqlUtil.closeResultSet(rs);
+				SqlUtil.closeResultSet(rs);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
