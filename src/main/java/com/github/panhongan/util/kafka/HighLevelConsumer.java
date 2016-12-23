@@ -35,17 +35,15 @@ public class HighLevelConsumer implements Runnable {
 			ConsumerIterator<byte[], byte[]> it = stream.iterator();
 
 			while (!is_finished && it.hasNext()) {
-				if (msg_processor != null) {
-					MessageAndMetadata<byte[], byte[]> msg_metadata = it.next();
-					msg_processor.processMessage(msg_metadata.topic(), 
-							msg_metadata.partition(), new String(msg_metadata.message()));
-				}
+				MessageAndMetadata<byte[], byte[]> msg_metadata = it.next();
+				msg_processor.processMessage(msg_metadata.topic(), msg_metadata.partition(),
+								new String(msg_metadata.message()));
 			}
-			
-			logger.info("HighLevelConsumer {}_{} stopped.", topic, partition_id);
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		}
+		
+		logger.info("HighLevelConsumer {}_{} stopped.", topic, partition_id);
 	}
 	
 	public void stopRunning() {
