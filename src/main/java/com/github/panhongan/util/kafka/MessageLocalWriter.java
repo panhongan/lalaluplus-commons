@@ -14,17 +14,26 @@ import com.github.panhongan.util.path.PathUtil;
 public class MessageLocalWriter extends AbstractMessageProcessor {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MessageLocalWriter.class);
+	
+	private static final int DEFAULT_MINUTES_WINDOW = 1;
 
 	private String data_dir = null;
 	
-	public MessageLocalWriter(String data_dir) {
-		this(data_dir, "");
+	private int minutes_window = DEFAULT_MINUTES_WINDOW;	// 1 minutes for one file
+	
+	public MessageLocalWriter(String data_dir, int minutes_window) {
+		this(data_dir, "", minutes_window);
 	}
 	
-	public MessageLocalWriter(String data_dir, String name) {
+	public MessageLocalWriter(String data_dir, String name, int minutes_window) {
 		super(name);
 		
 		this.data_dir = data_dir;
+		this.minutes_window = minutes_window;
+		if (minutes_window <= 0) {
+			minutes_window = DEFAULT_MINUTES_WINDOW;
+		}
+		
 		PathUtil.createRecursiveDir(data_dir);
 	}
 	
@@ -92,7 +101,7 @@ public class MessageLocalWriter extends AbstractMessageProcessor {
 	}
 	
 	protected String constructFileName(String topic, int partition_id) {
-		String begin_time = TimeUtil.getTimeSectionByMinute(TimeUtil.currTime(), 10, "yyyyMMdd_HHmm").beginTime;
+		String begin_time = TimeUtil.getTimeSectionByMinute(TimeUtil.currTime(), minutes_window, "yyyyMMdd_HHmm").beginTime;
 		String local_path = data_dir;
 		PathUtil.createRecursiveDir(local_path);
 			

@@ -32,7 +32,7 @@ public class TestMessageLocalWriterGroup {
 		
 		List<AbstractMessageProcessor> processors = new ArrayList<AbstractMessageProcessor>();
 		for (int i = 0; i < partitions; ++i) {
-			MessageLocalWriter local_writer = new MessageLocalWriter(config.getString("local.data.dir"));
+			MessageLocalWriter local_writer = new MessageLocalWriter(config.getString("local.data.dir"), 10);
 			if (local_writer.init()) {
 				processors.add(local_writer);
 			}

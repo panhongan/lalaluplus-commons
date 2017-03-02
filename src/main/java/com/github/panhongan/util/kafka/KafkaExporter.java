@@ -31,9 +31,10 @@ public class KafkaExporter implements Lifecycleable {
 			String [] arr = config.getString("kafka.topic.partition").split(":");
 			String topic = arr[0];
 			int partitions = Integer.valueOf(arr[1]).intValue();
+			int minutes_window = config.getInt("local.data.minutes.window", 10);
 			
 			for (int i = 0; i < partitions; ++i) {
-				MessageLocalWriter local_writer = new MessageLocalWriter(config.getString("local.data.dir"));
+				MessageLocalWriter local_writer = new MessageLocalWriter(config.getString("local.data.dir"), minutes_window);
 				if (local_writer.init()) {
 					processors.add(local_writer);
 				} else {

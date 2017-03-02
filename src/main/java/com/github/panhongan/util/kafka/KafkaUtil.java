@@ -3,16 +3,13 @@ package com.github.panhongan.util.kafka;
 import kafka.api.PartitionOffsetRequestInfo;
 import kafka.common.TopicAndPartition;
 import kafka.consumer.ConsumerConfig;
+import kafka.javaapi.OffsetRequest;
 import kafka.javaapi.OffsetResponse;
 import kafka.javaapi.PartitionMetadata;
 import kafka.javaapi.TopicMetadata;
 import kafka.javaapi.TopicMetadataRequest;
+import kafka.javaapi.TopicMetadataResponse;
 import kafka.javaapi.consumer.SimpleConsumer;
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerClosedException;
-import kafka.producer.ProducerConfig;
-import scala.MatchError;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,8 +18,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.panhongan.util.conf.Config;
+import com.github.panhongan.util.zookeeper.ZKUtil;
 
 public class KafkaUtil {
 
@@ -77,7 +83,7 @@ public class KafkaUtil {
 			Map<TopicAndPartition, PartitionOffsetRequestInfo> requestInfo = new HashMap<TopicAndPartition, PartitionOffsetRequestInfo>();
 			requestInfo.put(new TopicAndPartition(topic, partition),
 					new PartitionOffsetRequestInfo(kafka.api.OffsetRequest.LatestTime(), 1));
-			kafka.javaapi.OffsetRequest request = new kafka.javaapi.OffsetRequest(requestInfo,
+			OffsetRequest request = new OffsetRequest(requestInfo,
 					kafka.api.OffsetRequest.CurrentVersion(), DEFAULT_CLIENT_NAME);
 			OffsetResponse response = consumer.getOffsetsBefore(request);
 			if (response.hasError()) {
@@ -105,7 +111,7 @@ public class KafkaUtil {
 				consumer = new SimpleConsumer(broker, port, DEFAULT_TIMEOUT, DEFAULT_BUFFER_SIZE, DEFAULT_CLIENT_NAME);
 				List<String> topics = Collections.singletonList(topic);
 				TopicMetadataRequest req = new TopicMetadataRequest(topics);
-				kafka.javaapi.TopicMetadataResponse resp = consumer.send(req);
+				TopicMetadataResponse resp = consumer.send(req);
 				List<TopicMetadata> topic_metas = resp.topicsMetadata();
 				if (!topic_metas.isEmpty()) {
 					topic_metadata = topic_metas.get(0);
@@ -160,15 +166,21 @@ public class KafkaUtil {
 		}
 	}
 
-	public static Producer<String, String> createProducer(String zkList, String kafkaList, boolean sync) {
+	public static Producer<String, String> createProducer(Config producer_config) {
 		Properties props = new Properties();
-		props.put("zookeeper.connect", zkList);
-		props.put("serializer.class", "kafka.serializer.StringEncoder");
-		props.put("metadata.broker.list", kafkaList);
-		props.put("producer.type", sync ? "sync" : "async");
-		props.put("request.required.acks", "-1");
+		
+		props.put("bootstrap.servers", producer_config.getString("bootstrap.servers"));
+		props.put("metadata.broker.list", producer_config.getString("bootstrap.servers"));
+		props.put("zookeeper.connect", producer_config.getString("zookeeper.connect"));
+		props.put("producer.type", producer_config.getString("producer.type", "async"));
+		props.put("acks", producer_config.getString("acks", "all"));
+		props.put("block.on.buffer.full", producer_config.getString("block.on.buffer.full", "true"));
+		props.put("max.in.flight.requests.per.connection", producer_config.getString("max.in.flight.requests.per.connection", "1"));
+		props.put("retries", producer_config.getString("retries", "2"));
+		props.put("key.serializer", producer_config.getString("key.serializer", "org.apache.kafka.common.serialization.StringSerializer"));
+		props.put("value.serializer", producer_config.getString("value.serializer", "org.apache.kafka.common.serialization.StringSerializer"));
 
-		return new Producer<String, String>(new ProducerConfig(props));
+		return new KafkaProducer<String, String>(props);
 	}
 
 	public static void closeProducer(Producer<String, String> producer) {
@@ -180,47 +192,36 @@ public class KafkaUtil {
 		}
 	}
 
-	public static int sendBatch(Producer<String, String> producer, String topic, List<String> datas) {
-		int ret = -1;
-
+	public static boolean sendSync(Producer<String, String> producer, String topic, String message) {
+		boolean ret = false;
+		
 		try {
-			List<KeyedMessage<String, String>> dataToSend = new ArrayList<KeyedMessage<String, String>>();
-
-			for (String data : datas) {
-				dataToSend.add(new KeyedMessage<String, String>(topic, data));
-			}
-
-			producer.send(dataToSend);
-			ret = 0;
+			RecordMetadata result = producer.send(new ProducerRecord<String, String>(topic, message)).get();
+			logger.info("kafka producer send result : " + result);
+			ret = (result != null);
 		} catch (Exception e) {
-			logger.warn(e.getMessage());
-			e.printStackTrace();
-
-			if (e instanceof ProducerClosedException) {
-				ret = 1;
-			} else if (e instanceof MatchError) {
-				ret = 2;
-			}
+			logger.warn(e.getMessage(), e);
 		}
-
+		
 		return ret;
 	}
-
-	public static int sendData(Producer<String, String> producer, String topic, String data) {
-		List<String> datas = new ArrayList<String>();
-		datas.add(data);
-
-		return KafkaUtil.sendBatch(producer, topic, datas);
+	
+	public static void sendAsync(Producer<String, String> producer, String topic, String message, Callback callback) {
+		try {
+			producer.send(new ProducerRecord<String, String>(topic, message), callback);
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
+		}
 	}
 
-	public static ConsumerConfig createConsumerConfig(String zk_list, String group_id, boolean from_beginning) {
+	// old 
+	public static ConsumerConfig createConsumerConfig(Config config) {
 		Properties props = new Properties();
-		props.put("zookeeper.connect", zk_list);
-		props.put("group.id", group_id);
-		props.put("auto.offset.reset", (from_beginning ? "smallest" : "largest"));
-		props.put("zookeeper.session.timeout.ms", "30000");
-		props.put("zookeeper.sync.time.ms", "2000");
-		props.put("auto.commit.interval.ms", "1000");
+		props.put("zookeeper.connect", config.getString("zookeeper.connect"));
+		props.put("group.id", config.getString("group.id"));
+		props.put("auto.offset.reset", config.getString("auto.offset.reset", "largest"));
+		props.put("enable.auto.commit", config.getString("enable.auto.commit", "true"));
+		props.put("auto.commit.interval.ms", config.getString("auto.commit.interval.ms", "1000"));
 		return new ConsumerConfig(props);
 	}
 
@@ -230,6 +231,19 @@ public class KafkaUtil {
 
 	public static String getConsumerGroupOffsetZKNode(String groupid, String topic) {
 		return "/consumers/" + groupid + "/offsets/" + topic;
+	}
+	
+	public static boolean isKafkaClusterAlive(String zk_list) {
+		boolean is_alive = false;
+		
+		try {
+			ZooKeeper zk = ZKUtil.connectZK(zk_list, 10 * 1000, null);
+			is_alive = !zk.getChildren("/brokers/ids", false).isEmpty();
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
+		}
+		
+		return is_alive;
 	}
 
 }

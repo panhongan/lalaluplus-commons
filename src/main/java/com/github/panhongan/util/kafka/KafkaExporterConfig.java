@@ -30,7 +30,8 @@ public class KafkaExporterConfig {
 				!StringUtil.isEmpty(config.getString("kafka.consumer.group")) &&
 				!StringUtil.isEmpty(config.getString("kafka.consumer.group.restart.offset.largest")) &&
 				!StringUtil.isEmpty(config.getString("kafka.topic.partition")) &&
-				!StringUtil.isEmpty(config.getString("local.data.dir")));
+				!StringUtil.isEmpty(config.getString("local.data.dir")) &&
+				!StringUtil.isEmpty(config.getString("local.data.minutes.window")));
 	}
 	
 	@Override

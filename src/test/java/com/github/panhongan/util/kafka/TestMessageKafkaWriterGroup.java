@@ -31,13 +31,17 @@ public class TestMessageKafkaWriterGroup {
 		String topic = "test";
 		int partitions = 4;
 		
+		Config producer_config = new Config();
+		producer_config.addProperty("bootstrap.servers", config.getString("dst.kafka.broker.list"));
+		MessageKafkaWriter kafka_writer = new MessageKafkaWriter(producer_config, null);
+		if (!kafka_writer.init()) {
+			logger.warn("KafkaWriter init failed");
+			return;
+		}
+		
 		List<AbstractMessageProcessor> processors = new ArrayList<AbstractMessageProcessor>();
 		for (int i = 0; i < partitions; ++i) {
-			MessageKafkaWriter kafka_writer = new MessageKafkaWriter(config.getString("dst.kafka.zk.list"),
-					config.getString("dst.kafka.broker.list"));
-			if (kafka_writer.init()) {
-				processors.add(kafka_writer);
-			}
+			processors.add(kafka_writer);
 		}
 		
 		HighLevelConsumerGroup group = new HighLevelConsumerGroup(config.getString("src.kafka.zk.list"), 

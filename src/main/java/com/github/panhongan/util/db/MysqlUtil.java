@@ -1,6 +1,7 @@
 package com.github.panhongan.util.db;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ public class MysqlUtil {
 	
 	public static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
 	
-	public static final String SOURCE_TYPE = "mysql";
+	private static final int DEFAULT_LOGIN_TIMEOUT = 10;	// seconds
 	
 	public static MysqlPool createMysqlPool(Config conf) {
 		MysqlPool pool = new MysqlPool();
@@ -24,7 +25,6 @@ public class MysqlUtil {
 			pool.close();
 			pool = null;
 		}
-		
 		return pool;
 	}
 	
@@ -47,20 +47,59 @@ public class MysqlUtil {
 		}
 	}
 	
+	// jdbc:mysql://<host>:<port>/<database_name>?property1=value1&property2=value2
+	public static String getJDBCUrl(Config jdbc_config) {
+		String str = "jdbc:mysql://";
+		str += jdbc_config.getString("sql.server");
+		str += ":";
+		str += jdbc_config.getString("sql.port");
+		str += "/";
+		str += jdbc_config.getString("sql.db");
+		str += "?user=";
+		str += jdbc_config.getString("sql.user");;
+		str += "&password=";
+		str += jdbc_config.getString("sql.password");; 
+		str += "&socketTimeout=600000&characterEncoding=";
+		str += jdbc_config.getString("sql.charset");;
+		return str;
+	}
+	
 	public static MysqlSession createMysqlSession(String mysql_conf_file) throws SQLException {
+		MysqlSession session = null;
 		Config conf = new Config();
-		conf.parse(mysql_conf_file);
-		return new MysqlSession(SqlUtil.createConnection(conf));
+		if (conf.parse(mysql_conf_file)) {
+			session = MysqlUtil.createMysqlSession(conf);
+		}
+		return session;
 	}
 	
 	public static MysqlSession createMysqlSession(Config conf) throws SQLException {
-		return new MysqlSession(SqlUtil.createConnection(conf));
+		String url = MysqlUtil.getJDBCUrl(conf);
+		return new MysqlSession(MysqlUtil.createConnection(MYSQL_DRIVER, url));
 	}
 	
 	public static void closeMysqlSession(MysqlSession session) {
 		if (session != null) {
 			session.close();
 		}
+	}
+	
+	public static Connection createConnection(String driver, String url) {
+		return createConnection(driver, url, DEFAULT_LOGIN_TIMEOUT);
+	}
+	
+	public static Connection createConnection(String driver, String url, int login_timeout) {
+		Connection conn = null;
+
+		try {
+			Class.forName(driver);
+			DriverManager.setLoginTimeout(login_timeout);
+			conn = DriverManager.getConnection(url);
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
+		}
+		
+		return conn;
 	}
 	
 	// class MysqlPool
@@ -72,13 +111,9 @@ public class MysqlUtil {
 		
 		public boolean create(Config conf) {
 			try {
-				String server = conf.getString("sql.server");
-				int port = conf.getInt("sql.port");
-				String db = conf.getString("sql.db");
 				String user = conf.getString("sql.user");
 				String passwd = conf.getString("sql.password");
-				String charset = conf.getString("sql.charset", "utf8");
-				int timeout = conf.getInt("sql.login.timeout", 60);
+				int timeout = conf.getInt("sql.login.timeout", 10);
 				
 				int min_pool_size = conf.getInt("min.pool.size", 10);
 				int max_pool_size = conf.getInt("max.pool.size", 20);
@@ -88,14 +123,14 @@ public class MysqlUtil {
 				
 				pool = new ComboPooledDataSource(true);
 				pool.setDataSourceName(DATA_SOURCE_NAME + "_" + System.currentTimeMillis());
-				pool.setJdbcUrl(SqlUtil.getJDBCUrl(SOURCE_TYPE, server, port, db, charset));
+				pool.setJdbcUrl(MysqlUtil.getJDBCUrl(conf));
 				pool.setLoginTimeout(timeout);
 				pool.setDriverClass(MYSQL_DRIVER); 
 				pool.setUser(user);
 				pool.setPassword(passwd);
 				pool.setMaxPoolSize(max_pool_size);
 				pool.setMinPoolSize(min_pool_size);
-				pool.setInitialPoolSize(init_pool_size);  
+				pool.setInitialPoolSize(init_pool_size);
 				pool.setAcquireIncrement(increment_num);  
 				pool.setMaxIdleTime(max_idle_time);
 				pool.setTestConnectionOnCheckout(true);

@@ -1,11 +1,11 @@
 package com.github.panhongan.util.kafka;
 
+import com.github.panhongan.util.conf.Config;
 import com.github.panhongan.util.control.Lifecycleable;
 import com.github.panhongan.util.zookeeper.ZKUtil;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import kafka.consumer.Consumer;
 import kafka.consumer.KafkaStream;
+import kafka.consumer.Whitelist;
 import kafka.javaapi.consumer.ConsumerConnector;
-
 
 public class HighLevelConsumerGroup implements Lifecycleable {
 	
@@ -23,7 +23,7 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 	
 	private List<AbstractMessageProcessor> msg_processors = null;
 	
-	private ConsumerConnector consumer = null;
+	private List<ConsumerConnector> connectors = new ArrayList<ConsumerConnector>();
 	
 	private ExecutorService executor = null;
 	
@@ -61,19 +61,21 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 				logger.info("delete kafka consumer group offset node: {}", zk_node);
 			}
 			
-			consumer = Consumer.createJavaConsumerConnector(
-	                KafkaUtil.createConsumerConfig(zk_list, group_id, false));
-			Map<String, Integer> topic_partitions = new HashMap<String, Integer>();
-			topic_partitions.put(topic, partition);
-	        Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumer.createMessageStreams(topic_partitions);
-	        List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);
-	 
-	        //创建Java线程池
+			//创建Java线程池
 	        executor = Executors.newFixedThreadPool(partition);
-	 
-	        for (int i = 0; i < streams.size(); ++i) {
-	        	executor.submit(new HighLevelConsumer(streams.get(i), topic, i, msg_processors.get(i)));
-	        }
+	        
+	        Config consumer_config = new Config();
+	        consumer_config.addProperty("zookeeper.connect", zk_list);
+	        consumer_config.addProperty("group.id", group_id);
+	        consumer_config.addProperty("auto.offset.reset", restart_offset_largest ? "largest" : "smallest");
+	        
+			for (int i = 0; i < partition; ++i) {
+				ConsumerConnector connector = Consumer.createJavaConsumerConnector(KafkaUtil.createConsumerConfig(consumer_config));
+				connectors.add(connector);
+				
+				KafkaStream<byte[], byte[]> stream = connector.createMessageStreamsByFilter(new Whitelist(topic), 1).get(0);
+				executor.submit(new HighLevelConsumer(stream, topic, msg_processors.get(i)));
+			}
         	
         	is_ok = true;
 		} catch (Exception e) {
@@ -85,10 +87,10 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 
 	@Override
 	public void uninit() {
-		if (consumer != null) {
-			consumer.shutdown();
-			logger.info("Kafka Consumer shutdown");
+		for (ConsumerConnector connector : connectors) {
+			connector.shutdown();
 		}
+		logger.info("Consumer Connectors shutdown");
 		
 		if (executor != null) {
 			executor.shutdown();

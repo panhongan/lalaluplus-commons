@@ -16,6 +16,8 @@ public class TestMysqlUtil {
 		Config config = new Config();
 		if (config.parse("conf/mysql.properties")) {
 			System.out.println(config.toString());
+			
+			System.out.println(MysqlUtil.getJDBCUrl(config));
 		} else {
 			System.err.println("parse conf file failed");
 			return;

@@ -17,15 +17,12 @@ public class HighLevelConsumer implements Runnable {
 
 	private String topic = null;
 	
-	private int partition_id = -1;
-	
 	private boolean is_finished = false;
 
-	public HighLevelConsumer(KafkaStream<byte[], byte[]> stream, String topic, int partition_id,
+	public HighLevelConsumer(KafkaStream<byte[], byte[]> stream, String topic,
 			AbstractMessageProcessor msg_processor) {
 		this.stream = stream;
 		this.topic = topic;
-		this.partition_id = partition_id;
 		this.msg_processor = msg_processor;
 	}
 	
@@ -43,7 +40,7 @@ public class HighLevelConsumer implements Runnable {
 			logger.warn(e.getMessage(), e);
 		}
 		
-		logger.info("HighLevelConsumer {}_{} stopped.", topic, partition_id);
+		logger.info("HighLevelConsumer {} stopped.", topic);
 	}
 	
 	public void stopRunning() {

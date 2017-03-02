@@ -54,6 +54,21 @@ public class MysqlSession {
 		return ret;
 	}
 	
+	public boolean execute(String sql) {
+		boolean ret = false;
+		
+		try {
+			if (stmt != null) {
+				stmt.execute(sql);
+				ret = true;
+			}
+		} catch (SQLException e) {
+			logger.warn(e.getMessage(), e);
+		}
+		
+		return ret;
+	}
+	
 	public void close() {
 		SqlUtil.closeStatement(stmt);
 		SqlUtil.closeConnection(conn);

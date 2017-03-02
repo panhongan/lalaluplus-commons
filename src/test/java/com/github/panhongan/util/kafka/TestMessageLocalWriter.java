@@ -5,7 +5,7 @@ import com.github.panhongan.util.kafka.MessageLocalWriter;
 public class TestMessageLocalWriter {
 	
 	public static void main(String [] args) {
-		MessageLocalWriter local_writer = new MessageLocalWriter("./data");
+		MessageLocalWriter local_writer = new MessageLocalWriter("./data", 10);
 		
 		for (int i = 0; i < 120; ++i) {
 			local_writer.processMessage("aa", 1, new Integer(i).toString());

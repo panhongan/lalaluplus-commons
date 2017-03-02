@@ -23,8 +23,13 @@ public class TestMessageKafkaWriter {
 		logger.info(config.toString());
 		
 		String new_topic = "test-reformat";
-		MessageKafkaWriter kafka_writer = new MessageKafkaWriter(config.getString("dst.kafka.zk.list"),
-				config.getString("dst.kafka.broker.list"));
+		Config producer_config = new Config();
+		producer_config.addProperty("bootstrap.servers", config.getString("dst.kafka.broker.list"));
+		producer_config.addProperty("metadata.broker.list", config.getString("dst.kafka.broker.list"));
+		producer_config.addProperty("zookeeper.connect", config.getString("dst.kafka.zk.list"));
+		producer_config.addProperty("producer.type", "async");
+
+		MessageKafkaWriter kafka_writer = new MessageKafkaWriter(producer_config, null);
 		if (kafka_writer.init()) {
 			logger.info("KafkaWriter init ok");
 			
