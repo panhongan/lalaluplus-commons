@@ -21,15 +21,35 @@ public class MessageKafkaWriter extends AbstractMessageProcessor implements Life
 	
 	private MessageLocalWriter local_writer = null;
 	
+	private String send_topic = null;
+	
 	private boolean sync = false;
 	
+	/**
+	 * @param producer_config : producer config
+	 * @param send_failed_data_dir : if send failed, records will saved here
+	 */
 	public MessageKafkaWriter(Config producer_config, String send_failed_data_dir) {
+		this(producer_config, null, send_failed_data_dir);
+	}
+	
+	/**
+	 * @param producer_config : producer config
+	 * @param dst_topic : send topic
+	 * @param send_failed_data_dir : if send failed, records will saved here
+	 */
+	public MessageKafkaWriter(Config producer_config, String dst_topic, String send_failed_data_dir) {
 		this.producer_config = producer_config;
+		this.send_topic = dst_topic;
 		this.sync = producer_config.getString("producer.type", "async").contentEquals("sync");
 		
 		if (!StringUtil.isEmpty(send_failed_data_dir)) {
 			local_writer = new MessageLocalWriter(send_failed_data_dir, 1);
 		}
+	}
+	
+	public void setSendTopic(String send_topic) {
+		this.send_topic = send_topic;
 	}
 	
 	@Override
@@ -65,20 +85,20 @@ public class MessageKafkaWriter extends AbstractMessageProcessor implements Life
 	@Override
 	public Object processMessage(String topic, int partition_id, String message){
 		if (sync) {
-			if (!KafkaUtil.sendSync(producer, topic, message)) {
+			if (!KafkaUtil.sendSync(producer, send_topic, message)) {
 				logger.warn("send message to kafka failed : {}", message);
 				
 				// 写入本地文件
 				if (local_writer != null) {
-					local_writer.processMessage(topic, partition_id, message);
+					local_writer.processMessage(send_topic, partition_id, message);
 				}
 			}
 		} else {
 			Callback callback = null;
 			if (local_writer != null) {
-				callback = new KafkaProducerSendFailedCallback(local_writer, topic, partition_id, message);
+				callback = new KafkaProducerSendFailedCallback(local_writer, send_topic, partition_id, message);
 			}
-			KafkaUtil.sendAsync(producer, topic, message, callback);
+			KafkaUtil.sendAsync(producer, send_topic, message, callback);
 		}
 
 		return true;

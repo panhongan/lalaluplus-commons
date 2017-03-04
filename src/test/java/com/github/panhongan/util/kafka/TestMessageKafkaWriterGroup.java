@@ -28,12 +28,13 @@ public class TestMessageKafkaWriterGroup {
 		
 		logger.info(config.toString());
 		
-		String topic = "test";
+		String src_topic = "test";
+		String dst_topic = "test-kafka";
 		int partitions = 4;
 		
 		Config producer_config = new Config();
 		producer_config.addProperty("bootstrap.servers", config.getString("dst.kafka.broker.list"));
-		MessageKafkaWriter kafka_writer = new MessageKafkaWriter(producer_config, null);
+		MessageKafkaWriter kafka_writer = new MessageKafkaWriter(producer_config, dst_topic, null);
 		if (!kafka_writer.init()) {
 			logger.warn("KafkaWriter init failed");
 			return;
@@ -46,8 +47,7 @@ public class TestMessageKafkaWriterGroup {
 		
 		HighLevelConsumerGroup group = new HighLevelConsumerGroup(config.getString("src.kafka.zk.list"), 
 				config.getString("src.kafka.consumer.group"),
-				topic, partitions, true, processors);
-		
+				src_topic, partitions, true, processors);
 		if (group.init()) {
 			logger.info("HighLevelConsumerGroup init ok");
 		} else {

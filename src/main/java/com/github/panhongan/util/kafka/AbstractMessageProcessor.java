@@ -23,8 +23,20 @@ public abstract class AbstractMessageProcessor implements Lifecycleable {
 		return name;
 	}
 	
+	/**
+	 * @param topic : data source topic
+	 * @param partition_id : data source topic partition
+	 * @param message : message
+	 * @return Object
+	 */
 	public abstract Object processMessage(String topic, int partition_id, String message);
 	
+	/**
+	 * @param topic : data source topic
+	 * @param partition_id : data source topic partition
+	 * @param message : message set
+	 * @return Object
+	 */
 	public abstract Object processMessage(String topic, int partition_id, List<String> message);
 	
 }
