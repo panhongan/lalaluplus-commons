@@ -1,4 +1,4 @@
-package com.github.panhongan.util.kafka;
+package com.github.panhongan.util.kafka.export;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;
 import com.github.panhongan.util.control.Lifecycleable;
+import com.github.panhongan.util.kafka.AbstractKafkaMessageHandler;
+import com.github.panhongan.util.kafka.HighLevelConsumerGroup;
+import com.github.panhongan.util.kafka.MessageLocalWriter;
 
 
 public class KafkaExporter implements Lifecycleable {
@@ -17,7 +20,7 @@ public class KafkaExporter implements Lifecycleable {
 	
 	private static KafkaExporterConfig kafka_exporter_config = KafkaExporterConfig.getInstance();
 	
-	private List<AbstractMessageProcessor> processors = new ArrayList<AbstractMessageProcessor>();
+	private List<AbstractKafkaMessageHandler> processors = new ArrayList<AbstractKafkaMessageHandler>();
 	
 	private HighLevelConsumerGroup group = null;
 	
@@ -70,7 +73,7 @@ public class KafkaExporter implements Lifecycleable {
 			logger.info("HighLevelConsumerGroup uninit");
 		}
 		
-		for (AbstractMessageProcessor processor : processors) {
+		for (AbstractKafkaMessageHandler processor : processors) {
 			processor.uninit();
 			logger.info("MessageProcessor uninit : {}", StringUtil.toString(processor.getName()));
 		}

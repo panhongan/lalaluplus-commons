@@ -1,4 +1,4 @@
-package com.github.panhongan.util.kafka;
+package com.github.panhongan.util.kafka.export;
 
 import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;

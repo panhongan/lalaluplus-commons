@@ -1,5 +1,6 @@
 package com.github.panhongan.util.kafka;
 
+import kafka.admin.AdminUtils;
 import kafka.api.PartitionOffsetRequestInfo;
 import kafka.common.TopicAndPartition;
 import kafka.consumer.ConsumerConfig;
@@ -10,6 +11,8 @@ import kafka.javaapi.TopicMetadata;
 import kafka.javaapi.TopicMetadataRequest;
 import kafka.javaapi.TopicMetadataResponse;
 import kafka.javaapi.consumer.SimpleConsumer;
+import kafka.utils.ZKStringSerializer$;
+import kafka.utils.ZkUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.ZkConnection;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -244,6 +249,27 @@ public class KafkaUtil {
 		}
 		
 		return is_alive;
+	}
+	
+	public static void createTargetTopics(String topic, int partitions, int replicas, String zk_list) {
+		ZkClient zkClient = null;
+		ZkUtils zkUtils = null;
+		
+		try {
+			zkClient = new ZkClient(zk_list, 15 * 1000, 10 * 1000, ZKStringSerializer$.MODULE$);
+			zkUtils = new ZkUtils(zkClient, new ZkConnection(zk_list), false);
+			AdminUtils.createTopic(zkUtils, topic, partitions, replicas, new Properties());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			if (zkClient != null) {
+				zkClient.close();
+			}
+			
+			if (zkUtils != null) {
+				zkUtils.close();
+			}
+		}
 	}
 
 }

@@ -6,6 +6,8 @@ import com.github.panhongan.util.zookeeper.ZKUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,15 +15,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kafka.consumer.Consumer;
+import kafka.consumer.ConsumerThreadId;
 import kafka.consumer.KafkaStream;
 import kafka.consumer.Whitelist;
 import kafka.javaapi.consumer.ConsumerConnector;
+import kafka.javaapi.consumer.ConsumerRebalanceListener;
 
 public class HighLevelConsumerGroup implements Lifecycleable {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HighLevelConsumerGroup.class);
 	
-	private List<AbstractMessageProcessor> msg_processors = null;
+	private List<AbstractKafkaMessageHandler> msg_processors = null;
 	
 	private List<ConsumerConnector> connectors = new ArrayList<ConsumerConnector>();
 	
@@ -39,7 +43,7 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 	
 	public HighLevelConsumerGroup(String zk_list, String group_id,
 			String topic, int partition, boolean restart_offset_largest,
-			List<AbstractMessageProcessor> msg_processors) {
+			List<AbstractKafkaMessageHandler> msg_processors) {
 		this.zk_list = zk_list;
 		this.group_id = group_id;
 		this.topic = topic;
@@ -60,7 +64,7 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 				ZKUtil.deleteNode(zk_list, zk_node);
 				logger.info("delete kafka consumer group offset node: {}", zk_node);
 			}
-			
+
 			//创建Java线程池
 	        executor = Executors.newFixedThreadPool(partition);
 	        
@@ -72,6 +76,9 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 			for (int i = 0; i < partition; ++i) {
 				ConsumerConnector connector = Consumer.createJavaConsumerConnector(KafkaUtil.createConsumerConfig(consumer_config));
 				connectors.add(connector);
+				
+				DefaultConsumerRebalanceListener rebalance_listener = new DefaultConsumerRebalanceListener(connector, i);
+				connector.setConsumerRebalanceListener(rebalance_listener);
 				
 				KafkaStream<byte[], byte[]> stream = connector.createMessageStreamsByFilter(new Whitelist(topic), 1).get(0);
 				executor.submit(new HighLevelConsumer(stream, topic, msg_processors.get(i)));
@@ -96,6 +103,33 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 			executor.shutdown();
 			logger.info("Thread Executor shutdown");
 		}
+	}
+	
+	/**
+	 * Default ConsumerRebalanceListener
+	 */
+	private class DefaultConsumerRebalanceListener implements ConsumerRebalanceListener {
+		
+		private ConsumerConnector connector = null;
+		
+		private int create_index = -1;
+		
+		public DefaultConsumerRebalanceListener(ConsumerConnector connector, int index) {
+			this.connector = connector;
+			this.create_index = index;
+		}
+
+		@Override
+		public void beforeReleasingPartitions(Map<String, Set<Integer>> partitionOwnership) {
+			logger.info("before release partition, connector index is : {}", create_index);
+			connector.commitOffsets();
+		}
+
+		@Override
+		public void beforeStartingFetchers(String consumerId,
+				Map<String, Map<Integer, ConsumerThreadId>> globalPartitionAssignment) {
+		}
+		
 	}
 
 }

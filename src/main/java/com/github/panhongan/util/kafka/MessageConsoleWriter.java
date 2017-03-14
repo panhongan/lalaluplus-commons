@@ -3,10 +3,10 @@ package com.github.panhongan.util.kafka;
 
 import java.util.List;
 
-import com.github.panhongan.util.kafka.AbstractMessageProcessor;
+import com.github.panhongan.util.kafka.AbstractKafkaMessageHandler;
 
 
-public class MessageConsoleWriter extends AbstractMessageProcessor {
+public class MessageConsoleWriter extends AbstractKafkaMessageHandler {
 
 	@Override
 	public Object processMessage(String topic, int partition_id, String message) {
