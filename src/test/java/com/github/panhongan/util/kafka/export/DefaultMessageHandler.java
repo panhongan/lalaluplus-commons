@@ -19,7 +19,7 @@ public class DefaultMessageHandler extends AbstractMessageHandler {
 	}
 
 	@Override
-	public Map<String, List<String>> convert(String str) {
+	public Map<String, List<String>> handle(String str) {
 		Map<String, List<String>> ret = new HashMap<String, List<String>>();
 		ret.put("abc", new ArrayList<String>());
 		return ret;

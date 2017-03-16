@@ -10,11 +10,11 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.panhongan.util.kafka.AbstractKafkaMessageHandler;
+import com.github.panhongan.util.kafka.AbstractKafkaMessageProcessor;
 import com.github.panhongan.util.kafka.MessageKafkaWriter;
 import com.github.panhongan.util.thread.ControllableThread;
 
-public class KafkaMessageWorkflow extends AbstractKafkaMessageHandler {
+public class KafkaMessageWorkflow extends AbstractKafkaMessageProcessor {
 
 	private static final Logger logger = LoggerFactory.getLogger(KafkaMessageWorkflow.class);
 
@@ -28,7 +28,7 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageHandler {
 	
 	private MessageKafkaWriter kafka_writer = null;
 	
-	private KafkaMessageHandlerServiceConfig config = null;
+	private KafkaMessageServiceConfig config = null;
 
 	private Random random = new Random();
 
@@ -38,7 +38,7 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageHandler {
 
 	private int inner_processors_per_queue = 2;
 
-	public KafkaMessageWorkflow(AbstractMessageHandler handler, MessageKafkaWriter kafka_writer, KafkaMessageHandlerServiceConfig config) {
+	public KafkaMessageWorkflow(AbstractMessageHandler handler, MessageKafkaWriter kafka_writer, KafkaMessageServiceConfig config) {
 		this.handler = handler;
 		this.kafka_writer = kafka_writer;
 		this.config = config;
@@ -71,14 +71,14 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageHandler {
 
 			// InnerMessageProcessor
 			for (int j = 0; j < inner_processors_per_queue; ++j) {
-				AbstractMessageHandler converter_clone = (AbstractMessageHandler) handler.clone();
-				if (converter_clone == null || !converter_clone.init()) {
+				AbstractMessageHandler handler_clone = (AbstractMessageHandler) handler.clone();
+				if (handler_clone == null || !handler_clone.init()) {
 					logger.warn("converter clone failed");
 					break;
 				}
 
 				int instance_id = i * inner_processors_per_queue + j;
-				InnerMessageProcessor processor = new InnerMessageProcessor(converter_clone, queue, kafka_writer);
+				InnerMessageProcessor processor = new InnerMessageProcessor(handler_clone, queue, kafka_writer);
 				processor.setName("InnerMessageProcessor_" + instance_id);
 				processor.setSleepInterval(0);
 				if (processor.init()) {
@@ -169,22 +169,22 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageHandler {
 
 	public class InnerMessageProcessor extends ControllableThread {
 		
-		private AbstractMessageHandler converter = null;
+		private AbstractMessageHandler handler = null;
 
 		private MessageKafkaWriter kafka_writer = null;
 
 		private ArrayBlockingQueue<Message> queue = null;
 		
-		public InnerMessageProcessor(AbstractMessageHandler abstractConveter, ArrayBlockingQueue<Message> queue,
+		public InnerMessageProcessor(AbstractMessageHandler handler, ArrayBlockingQueue<Message> queue,
 				MessageKafkaWriter kafka_writer) {
-			this.converter = abstractConveter;
+			this.handler = handler;
 			this.queue = queue;
 			this.kafka_writer = kafka_writer;
 		}
 
 		@Override
 		public boolean init() {
-			boolean is_ok = (converter != null && queue != null && kafka_writer != null);
+			boolean is_ok = (handler != null && queue != null && kafka_writer != null);
 			if (!is_ok) {
 				logger.warn("Converter or queue is null");
 				return is_ok;
@@ -199,8 +199,8 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageHandler {
 		public void uninit() {
 			super.uninit();
 
-			if (converter != null) {
-				converter.uninit();
+			if (handler != null) {
+				handler.uninit();
 			}
 		}
 
@@ -209,7 +209,7 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageHandler {
 			try {
 				Message msg = queue.poll(1L, TimeUnit.MILLISECONDS);
 				if (msg != null) {
-					Map<String, List<String>> convert_results = converter.convert(msg.message);
+					Map<String, List<String>> convert_results = handler.handle(msg.message);
 					for (String dst_topic : convert_results.keySet()) {
 						kafka_writer.setSendTopic(dst_topic);
 						kafka_writer.processMessage(msg.topic, msg.partition_id, convert_results.get(dst_topic));

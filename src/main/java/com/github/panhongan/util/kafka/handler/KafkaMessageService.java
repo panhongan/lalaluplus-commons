@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;
 import com.github.panhongan.util.control.Lifecycleable;
-import com.github.panhongan.util.kafka.AbstractKafkaMessageHandler;
+import com.github.panhongan.util.kafka.AbstractKafkaMessageProcessor;
 import com.github.panhongan.util.kafka.HighLevelConsumerGroup;
 import com.github.panhongan.util.kafka.MessageKafkaWriter;
 
-public class KafkaMessageHandlerService implements Lifecycleable {
+public class KafkaMessageService implements Lifecycleable {
 
-	private static final Logger logger = LoggerFactory.getLogger(KafkaMessageHandlerService.class);
+	private static final Logger logger = LoggerFactory.getLogger(KafkaMessageService.class);
 
-	private List<AbstractKafkaMessageHandler> workflows = new ArrayList<AbstractKafkaMessageHandler>();
+	private List<AbstractKafkaMessageProcessor> workflows = new ArrayList<AbstractKafkaMessageProcessor>();
 	
-	private KafkaMessageHandlerServiceConfig config = null;
+	private KafkaMessageServiceConfig config = null;
 
 	private HighLevelConsumerGroup group = null;
 	
@@ -28,13 +28,13 @@ public class KafkaMessageHandlerService implements Lifecycleable {
 	private AbstractMessageHandler handler = null;
 	
 	/**
-	 * @param converter should invoke init() succeed
+	 * @param handler should invoke init() succeed
 	 */
 	public void setMessageHandler(AbstractMessageHandler handler) {
 		this.handler = handler;
 	}
 	
-	public void setConfig(KafkaMessageHandlerServiceConfig config) {
+	public void setConfig(KafkaMessageServiceConfig config) {
 		this.config = config;
 	}
 
@@ -42,7 +42,7 @@ public class KafkaMessageHandlerService implements Lifecycleable {
 	public boolean init() {
 		boolean is_ok = config.isValid();
 		if (!is_ok) {
-			logger.warn("KafkaMessageHandlerServiceConfig is invalid : {}" + config.toString());
+			logger.warn("KafkaMessageServiceConfig is invalid : {}" + config.toString());
 			return is_ok;
 		}
 
@@ -108,7 +108,7 @@ public class KafkaMessageHandlerService implements Lifecycleable {
 			logger.info("HighLevelConsumerGroup uninit");
 		}
 
-		for (AbstractKafkaMessageHandler processor : workflows) {
+		for (AbstractKafkaMessageProcessor processor : workflows) {
 			processor.uninit();
 			logger.info("MessageProcessor uninit : {}", StringUtil.toString(processor.getName()));
 		}
@@ -116,6 +116,10 @@ public class KafkaMessageHandlerService implements Lifecycleable {
 		if (kafka_writer != null) {
 			kafka_writer.uninit();
 			logger.info("MessageKafkaWriter uninit");
+		}
+		
+		if (handler != null) {
+			handler.uninit();
 		}
 	}
 	

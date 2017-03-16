@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.github.panhongan.util.TimeUtil;
 import com.github.panhongan.util.path.PathUtil;
 
-public class MessageLocalWriter extends AbstractKafkaMessageHandler {
+public class MessageLocalWriter extends AbstractKafkaMessageProcessor {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MessageLocalWriter.class);
 	

@@ -4,18 +4,18 @@ import java.util.List;
 
 import com.github.panhongan.util.control.Lifecycleable;
 
-public abstract class AbstractKafkaMessageHandler implements Lifecycleable {
+public abstract class AbstractKafkaMessageProcessor implements Lifecycleable {
 	
 	private String name = null;
 	
-	public AbstractKafkaMessageHandler() {
+	public AbstractKafkaMessageProcessor() {
 	}
 	
 	public void setName(String name) {
 		this.name = name;
 	}
 	
-	public AbstractKafkaMessageHandler(String name) {
+	public AbstractKafkaMessageProcessor(String name) {
 		this.name = name;
 	}
 	

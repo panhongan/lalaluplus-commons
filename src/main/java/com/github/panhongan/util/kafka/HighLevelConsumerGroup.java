@@ -25,7 +25,7 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HighLevelConsumerGroup.class);
 	
-	private List<AbstractKafkaMessageHandler> msg_processors = null;
+	private List<AbstractKafkaMessageProcessor> msg_processors = null;
 	
 	private List<ConsumerConnector> connectors = new ArrayList<ConsumerConnector>();
 	
@@ -43,7 +43,7 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 	
 	public HighLevelConsumerGroup(String zk_list, String group_id,
 			String topic, int partition, boolean restart_offset_largest,
-			List<AbstractKafkaMessageHandler> msg_processors) {
+			List<AbstractKafkaMessageProcessor> msg_processors) {
 		this.zk_list = zk_list;
 		this.group_id = group_id;
 		this.topic = topic;

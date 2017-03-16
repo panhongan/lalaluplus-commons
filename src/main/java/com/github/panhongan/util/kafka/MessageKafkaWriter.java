@@ -11,7 +11,7 @@ import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;
 import com.github.panhongan.util.control.Lifecycleable;
 
-public class MessageKafkaWriter extends AbstractKafkaMessageHandler implements Lifecycleable {
+public class MessageKafkaWriter extends AbstractKafkaMessageProcessor implements Lifecycleable {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MessageKafkaWriter.class);
 	

@@ -11,7 +11,7 @@ public class HighLevelConsumer implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(HighLevelConsumer.class);
 	
-	private AbstractKafkaMessageHandler msg_processor = null;
+	private AbstractKafkaMessageProcessor msg_processor = null;
 
 	private KafkaStream<byte[], byte[]> stream = null;
 
@@ -20,7 +20,7 @@ public class HighLevelConsumer implements Runnable {
 	private boolean is_finished = false;
 
 	public HighLevelConsumer(KafkaStream<byte[], byte[]> stream, String topic,
-			AbstractKafkaMessageHandler msg_processor) {
+			AbstractKafkaMessageProcessor msg_processor) {
 		this.stream = stream;
 		this.topic = topic;
 		this.msg_processor = msg_processor;

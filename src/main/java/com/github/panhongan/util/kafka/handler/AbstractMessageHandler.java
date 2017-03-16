@@ -7,7 +7,7 @@ import com.github.panhongan.util.control.Lifecycleable;
 
 public abstract class AbstractMessageHandler implements Lifecycleable {
 	
-	public abstract Map<String, List<String>> convert(String str);
+	public abstract Map<String, List<String>> handle(String str);
 	
 	public abstract Object clone();
 	

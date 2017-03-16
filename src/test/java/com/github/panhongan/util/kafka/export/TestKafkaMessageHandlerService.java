@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.panhongan.util.kafka.handler.AbstractMessageHandler;
-import com.github.panhongan.util.kafka.handler.KafkaMessageHandlerServiceConfig;
-import com.github.panhongan.util.kafka.handler.KafkaMessageHandlerService;
-import com.github.panhongan.util.kafka.handler.KafkaMessageHandlerServiceShutdownHook;
+import com.github.panhongan.util.kafka.handler.KafkaMessageServiceConfig;
+import com.github.panhongan.util.kafka.handler.KafkaMessageService;
+import com.github.panhongan.util.kafka.handler.KafkaMessageServiceShutdownHook;
 
 
 public class TestKafkaMessageHandlerService {
@@ -27,7 +27,7 @@ public class TestKafkaMessageHandlerService {
 
 		// config
 		String conf_file = args[0];
-		KafkaMessageHandlerServiceConfig config = new KafkaMessageHandlerServiceConfig();
+		KafkaMessageServiceConfig config = new KafkaMessageServiceConfig();
 		if (!config.parse(conf_file)) {
 			logger.warn("parse conf file failed : {}", conf_file);
 			return;
@@ -48,13 +48,13 @@ public class TestKafkaMessageHandlerService {
 		}
 		
 		// init service
-		KafkaMessageHandlerService service = new KafkaMessageHandlerService();
+		KafkaMessageService service = new KafkaMessageService();
 		service.setMessageHandler(converter);
 		service.setConfig(config);
 		if (service.init()) {
 			logger.info("{} init ok", CLASS_NAME);
 
-			Runtime.getRuntime().addShutdownHook(new KafkaMessageHandlerServiceShutdownHook(service));
+			Runtime.getRuntime().addShutdownHook(new KafkaMessageServiceShutdownHook(service));
 		} else {
 			logger.warn("{} init failed", CLASS_NAME);
 			service.uninit();

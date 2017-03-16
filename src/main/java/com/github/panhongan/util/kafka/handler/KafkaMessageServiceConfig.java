@@ -3,7 +3,7 @@ package com.github.panhongan.util.kafka.handler;
 import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;
 
-public class KafkaMessageHandlerServiceConfig {
+public class KafkaMessageServiceConfig {
 
 	private Config config = new Config();
 	

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.panhongan.util.conf.Config;
-import com.github.panhongan.util.kafka.AbstractKafkaMessageHandler;
 import com.github.panhongan.util.kafka.HighLevelConsumerGroup;
 import com.github.panhongan.util.kafka.MessageConsoleWriter;
 
@@ -30,7 +29,7 @@ public class TestMessageConsoleWriterGroup {
 		int partitions = 4;
 		
 		// console writer
-		List<AbstractKafkaMessageHandler> processors = new ArrayList<AbstractKafkaMessageHandler>();
+		List<AbstractKafkaMessageProcessor> processors = new ArrayList<AbstractKafkaMessageProcessor>();
 		for (int i = 0; i < partitions; ++i) {
 			MessageConsoleWriter console_writer = new MessageConsoleWriter();
 			if (console_writer.init()) {
@@ -56,7 +55,7 @@ public class TestMessageConsoleWriterGroup {
 		// uninit
 		group.uninit();
 		
-		for (AbstractKafkaMessageHandler processor : processors) {
+		for (AbstractKafkaMessageProcessor processor : processors) {
 			processor.uninit();
 		}
 	}
