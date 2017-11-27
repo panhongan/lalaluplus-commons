@@ -60,13 +60,7 @@ public class ZKUtil {
 		
 		return ret;
 	}
-	
-	/**
-	 * @param zk_host
-	 * @param timeout millionseconds
-	 * @param watcher
-	 * @return ZooKeeper
-	 */
+
 	public static ZooKeeper connectZK(String zk_host, int timeout, Watcher watcher) {
 		ZooKeeper zk = null;
 		boolean is_ok = false;

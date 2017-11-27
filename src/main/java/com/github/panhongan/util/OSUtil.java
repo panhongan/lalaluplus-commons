@@ -33,4 +33,42 @@ public class OSUtil {
 		return type;
 	}
 
+	public static class OSType {
+
+		public static final OSType UNKNOWN = new OSType("unknown");
+
+		public static final OSType WIN = new OSType("windows");
+
+		public static final OSType MAC = new OSType("mac");
+
+		public static final OSType LINUX = new OSType("linux");
+
+		private String type = null;
+
+		private OSType(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public String toString() {
+			return type;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+
+			if (obj instanceof OSType) {
+				return type.contentEquals(((OSType) obj).type);
+			} else if (obj instanceof String) {
+				return type.contentEquals((String) obj);
+			}
+
+			return false;
+		}
+
+	} // end class OSType
+
 }

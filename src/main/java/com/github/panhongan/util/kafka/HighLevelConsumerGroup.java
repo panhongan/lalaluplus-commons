@@ -130,6 +130,32 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 				Map<String, Map<Integer, ConsumerThreadId>> globalPartitionAssignment) {
 		}
 		
-	}
+	} // end class DefaultConsumerRebalanceListener
+	
+	private class ConnectorMonitor extends Thread {
+		
+		private List<ConsumerConnector> connectors = null;
+		
+		private boolean is_finished = false;
+		
+		@Override
+		public void run() {
+			while (!is_finished) {
+				
+				for(ConsumerConnector connector : connectors) {
+					//connector.
+				}
+				
+				try {
+					Thread.sleep(5 * 1000);
+				} catch (Exception e) {
+					logger.warn(e.getMessage(), e);
+				}
+			}
+			
+			logger.info("ConnectorMonitor finished");
+		}
+
+	} // end class ConnectorMonitor
 
 }

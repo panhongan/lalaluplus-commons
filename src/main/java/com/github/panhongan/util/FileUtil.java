@@ -1,6 +1,8 @@
 package com.github.panhongan.util;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +67,31 @@ public class FileUtil {
 				}
 			}
 		}
+	}
+
+	public static String readFileAsString(String filePath) {
+		FileInputStream input = null;
+		String content = null;
+
+		try {
+			File file = new File(filePath);
+			byte [] bytes = new byte[(int)file.length()];
+			input = new FileInputStream(file);
+			input.read(bytes);
+			content = new String(bytes);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+		}
+
+		return content;
 	}
 	
 	public static interface LineProcessor {
