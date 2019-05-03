@@ -1,16 +1,17 @@
 package com.github.panhongan.util.db;
 
+import java.net.URI;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.panhongan.util.Pair;
-import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;
-import com.github.panhongan.util.uri.ServerURI;
+import com.github.panhongan.util.host.HostAndPortParser;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
@@ -60,8 +61,8 @@ public class JedisUtil {
 		try {
 			Set<HostAndPort> nodes = new HashSet<HostAndPort>();
 		
-			for (Pair<String, Integer> pair : ServerURI.parse(conf.getString("redis.servers"))) {
-				nodes.add(new HostAndPort(pair.first, pair.second));
+			for (com.google.common.net.HostAndPort hostAndPort : HostAndPortParser.parse(conf.getString("redis.servers"))) {
+				nodes.add(new HostAndPort(hostAndPort.getHostText(), hostAndPort.getPort()));
 			}
 			
 			jedis_cluster = new JedisCluster(nodes);
@@ -82,14 +83,17 @@ public class JedisUtil {
 		Jedis jedis = null;
 		
 		try {
-			List<Pair<String, Integer>> nodes = ServerURI.parse(conf.getString("redis.servers"));
-			jedis = new Jedis(nodes.get(0).first, nodes.get(0).second);
-			String passwd = conf.getString("redis.password");
-			if (!StringUtil.isEmpty(passwd)) {
-				jedis.auth(passwd);
+			Collection<HostAndPort> nodes = HostAndPortParser.parseRedisHost(conf.getString("redis.servers"));
+			for (HostAndPort hostAndPort : nodes) {
+				jedis = new Jedis(hostAndPort.getHost(), hostAndPort.getPort());
+				String passwd = conf.getString("redis.password");
+				if (StringUtils.isNotEmpty(passwd)) {
+					jedis.auth(passwd);
+				}
+
+				jedis.connect();
+				break;
 			}
-			
-			jedis.connect();
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		}
@@ -109,19 +113,17 @@ public class JedisUtil {
 		config.setMaxIdle(conf.getInt("jedis.pool.max.idle", 40));
 		config.setMaxWaitMillis(conf.getInt("jedis.pool.get_resource.timeout", 10 * 1000));
 		config.setTestOnBorrow(true);
-		
+
 		Pool<Jedis> pool = null;
 		
 		try {
-			List<Pair<String, Integer>> nodes = ServerURI.parse(conf.getString("redis.servers"));
-			String redis_server = nodes.get(0).first;
-			int redis_port = nodes.get(0).second;
+			String uri = conf.getString("redis.servers");
 			String redis_passwd = conf.getString("redis.password");
 			int connection_timeout = conf.getInt("redis.connection.timeout", 10 * 1000);
-			if (StringUtil.isEmpty(redis_passwd)) {
-				pool = new JedisPool(config, redis_server, redis_port, connection_timeout);
+			if (StringUtils.isEmpty(redis_passwd)) {
+				pool = new JedisPool(config, URI.create(uri), connection_timeout);
 			} else {
-				pool = new JedisPool(config, redis_server, redis_port, connection_timeout, redis_passwd);
+				//pool = new JedisPool(config, URI.create(uri), connection_timeout, redis_passwd);
 			}
 			
 			if (!JedisUtil.validatePool(pool)) {

@@ -3,32 +3,30 @@ package com.github.panhongan.util.dag;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+/**
+ * lalalu plus
+ */
 
 public class Vertex {
+
+	private String name;	    // 顶点名字
 	
-	private static final Logger logger = LoggerFactory.getLogger(Vertex.class);
+	private int inDegree = 0; 	// 顶点入度
 	
-	private String name = "";	// 顶点名字
+	private boolean isTraversed = false;
 	
-	private int in_degree = 0; 	// 顶点入度
-	
-	private boolean is_traversed = false;
-	
-	private List<Edge> edges = new ArrayList<Edge>();	// 当前顶点指向的顶点
+	private List<Edge> edges = new ArrayList<>();	// 当前顶点指向的顶点, 构成的边
 	
 	public Vertex(String name) {
 		this.name = name;
 	}
 	
 	public String getName() {
-		return this.name;
+		return name;
 	}
 	
 	public int getInDegree() {
-		return in_degree;
+		return inDegree;
 	}
 	
 	public List<Edge> getEdges() {
@@ -36,22 +34,22 @@ public class Vertex {
 	}
 	
 	public void increaseInDegree() {
-		++in_degree;
+		++inDegree;
 	}
 	
 	public void decreaseInDegree() {
-		--in_degree;
-		if (in_degree < 0) {
-			logger.warn("exceptional in_degree : vertex_name = {}, in_degree = {}", name, in_degree);
+		--inDegree;
+		if (inDegree < 0) {
+			throw new RuntimeException("exceptional inDegree : vertex_name = " + name + ", inDegree = " + inDegree);
 		}
 	}
 	
 	public void markTraversed() {
-		is_traversed = true;
+		isTraversed = true;
 	}
 	
 	public boolean isTraversed() {
-		return is_traversed;
+		return isTraversed;
 	}
 	
 	public void addDownstream(Vertex v) {
@@ -62,16 +60,13 @@ public class Vertex {
 	}
 	
 	public Edge findEdge(String toVertexName) {
-		Edge edge = null;
-		
 		for (Edge e : edges) {
 			if (e.getToVertex().getName().contentEquals(toVertexName)) {
-				edge = e;
-				break;
+				return e;
 			}
 		}
 		
-		return edge;
+		return null;
 	}
 	
 	public void removeEdge(Vertex to) {
@@ -104,7 +99,7 @@ public class Vertex {
 	}
 	
 	public void restore(Vertex v) {
-		this.in_degree = v.in_degree;
+		this.inDegree = v.inDegree;
 	}
 	
 	@Override
@@ -112,8 +107,8 @@ public class Vertex {
 		StringBuffer sb = new StringBuffer();
 		sb.append("name = ");
 		sb.append(name);
-		sb.append(", in_degree = ");
-		sb.append(in_degree);
+		sb.append(", inDegree = ");
+		sb.append(inDegree);
 		sb.append(", childs = [");
 		if (!edges.isEmpty()) {
 			for (int i = 0; i < edges.size() - 1; ++i) {
@@ -129,11 +124,9 @@ public class Vertex {
 	
 	public static Vertex copy(Vertex v) {
 		Vertex vertex = new Vertex(v.name);
-		vertex.in_degree = v.in_degree;
+		vertex.inDegree = v.inDegree;
 		vertex.edges = v.edges;
 		return vertex;
 	}
-	
-
 
 }

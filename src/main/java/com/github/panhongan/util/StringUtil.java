@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StringUtil {
-	
-	public static boolean isEmpty(String str){
-		return (ObjectUtil.isNull(str) || str.isEmpty());
-	}
-	
+
 	public static List<String> sperate(String str, String regex) {
 		List<String> list = new ArrayList<String>();
 		

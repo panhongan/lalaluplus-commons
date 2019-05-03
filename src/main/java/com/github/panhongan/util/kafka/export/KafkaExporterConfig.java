@@ -2,6 +2,7 @@ package com.github.panhongan.util.kafka.export;
 
 import com.github.panhongan.util.StringUtil;
 import com.github.panhongan.util.conf.Config;
+import org.apache.commons.lang3.StringUtils;
 
 public class KafkaExporterConfig {
 	
@@ -25,13 +26,13 @@ public class KafkaExporterConfig {
 	}
 	
 	public boolean isValid() {
-		return (!StringUtil.isEmpty(config.getString("kafka.zk.list")) &&
-				!StringUtil.isEmpty(config.getString("kafka.broker.list")) &&
-				!StringUtil.isEmpty(config.getString("kafka.consumer.group")) &&
-				!StringUtil.isEmpty(config.getString("kafka.consumer.group.restart.offset.largest")) &&
-				!StringUtil.isEmpty(config.getString("kafka.topic.partition")) &&
-				!StringUtil.isEmpty(config.getString("local.data.dir")) &&
-				!StringUtil.isEmpty(config.getString("local.data.minutes.window")));
+		return (StringUtils.isNotEmpty(config.getString("kafka.zk.list")) &&
+				StringUtils.isNotEmpty(config.getString("kafka.broker.list")) &&
+				StringUtils.isNotEmpty(config.getString("kafka.consumer.group")) &&
+				StringUtils.isNotEmpty(config.getString("kafka.consumer.group.restart.offset.largest")) &&
+				StringUtils.isNotEmpty(config.getString("kafka.topic.partition")) &&
+				StringUtils.isNotEmpty(config.getString("local.data.dir")) &&
+				StringUtils.isNotEmpty(config.getString("local.data.minutes.window")));
 	}
 	
 	@Override

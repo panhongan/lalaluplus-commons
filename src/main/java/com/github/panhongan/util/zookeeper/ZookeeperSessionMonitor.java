@@ -73,7 +73,7 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 	public boolean init() {
 		boolean ret = false;
 		
-		zk = ZKUtil.connectZK(zk_host, timeout, watcher);
+		zk = ZKUtils.connectZK(zk_host, timeout, watcher);
 		if (zk != null) {
 			this.start();
 			ret = true;
@@ -86,7 +86,7 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 	public void uninit() {
 		super.uninit();
 		
-		ZKUtil.closeZK(zk);
+		ZKUtils.closeZK(zk);
 		zk = null;
 		
 		this.clearSessionExceptionProcessor();
@@ -96,7 +96,7 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 	@Override
 	protected void work() {
 		if (zk == null) {
-			zk = ZKUtil.connectZK(zk_host, timeout, watcher);
+			zk = ZKUtils.connectZK(zk_host, timeout, watcher);
 			if (zk != null) {
 				this.notifySessionUpdaters();
 			}
@@ -112,7 +112,7 @@ public class ZookeeperSessionMonitor extends ControllableThread {
 			
 			this.processConnectionException();
 			
-			ZKUtil.closeZK(zk);
+			ZKUtils.closeZK(zk);
 			zk = null;
 		}
 	}

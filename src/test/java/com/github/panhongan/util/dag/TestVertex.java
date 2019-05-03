@@ -1,6 +1,8 @@
 package com.github.panhongan.util.dag;
 
-import com.github.panhongan.util.dag.Vertex;
+/**
+ * lalalu plus
+ */
 
 public class TestVertex {
 	

@@ -79,7 +79,7 @@ public abstract class ControllableThread extends Thread implements Lifecycleable
 	}
 	
 	@Override
-	public void defreeze() {
+	public void unfreeze() {
 		this.is_frozen = false;
 	}
 	

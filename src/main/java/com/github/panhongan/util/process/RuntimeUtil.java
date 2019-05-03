@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.panhongan.util.collection.CollectionUtil;
+import org.apache.commons.collections4.CollectionUtils;
 
 public class RuntimeUtil {
 	
@@ -46,7 +46,7 @@ public class RuntimeUtil {
 	
 	public static boolean exec(List<String> cmd, List<String> output, List<String> err) {
 		boolean ret = false;
-		if (!CollectionUtil.isEmpty(cmd)) {
+		if (CollectionUtils.isNotEmpty(cmd)) {
 			ret = exec(cmd.toArray(new String[0]), output, err);
 		}
 		return ret;

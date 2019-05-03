@@ -3,5 +3,5 @@
 /.settings/
 .classpath
 .project
-.idea
-java-utils.iml
+/.idea
+*.iml

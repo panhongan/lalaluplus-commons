@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.panhongan.util.TimeUtil;
-import com.github.panhongan.util.path.PathUtil;
+import com.github.panhongan.util.path.PathUtils;
 
 public class MessageLocalWriter extends AbstractKafkaMessageProcessor {
 	
@@ -34,7 +34,7 @@ public class MessageLocalWriter extends AbstractKafkaMessageProcessor {
 			minutes_window = DEFAULT_MINUTES_WINDOW;
 		}
 		
-		PathUtil.createRecursiveDir(data_dir);
+		PathUtils.createRecursiveDir(data_dir);
 	}
 	
 	public String getDataDir() {
@@ -103,7 +103,7 @@ public class MessageLocalWriter extends AbstractKafkaMessageProcessor {
 	protected String constructFileName(String topic, int partition_id) {
 		String begin_time = TimeUtil.getTimeSectionByMinute(TimeUtil.currTime(), minutes_window, "yyyyMMdd_HHmm").beginTime;
 		String local_path = data_dir;
-		PathUtil.createRecursiveDir(local_path);
+		PathUtils.createRecursiveDir(local_path);
 			
 		String local_file = local_path + "/" + topic + "_" + partition_id + "_" + begin_time;
 		return local_file;

@@ -2,12 +2,12 @@ package com.github.panhongan.util;
 
 public class Value {
 	
-	private String internal = null;
+	private String value;
 	
 	private ValueType value_type = ValueType.UNKNOWN;
 	
 	public Value(String str, ValueType type) {
-		this.internal = str;
+		this.value = str;
 		this.value_type = type;
 		if (type == null) {
 			value_type = ValueType.UNKNOWN;
@@ -15,7 +15,7 @@ public class Value {
 	}
 	
 	public void setValue(String str, ValueType type) {
-		this.internal = str;
+		this.value = str;
 		this.value_type = type;
 		if (type == null) {
 			value_type = ValueType.UNKNOWN;
@@ -23,7 +23,7 @@ public class Value {
 	}
 	
 	public String getInternal() {
-		return internal;
+		return value;
 	}
 	
 	public ValueType getValueType() {
@@ -32,13 +32,13 @@ public class Value {
 	
 	@Override
 	public String toString() {
-		return "(" + StringUtil.toString(this.internal) + ", " + value_type.toString() + ")";
+		return "(" + StringUtil.toString(this.value) + ", " + value_type.toString() + ")";
 	}
 	
 	public boolean toBoolean() throws ValueTypeException {
 		if (ValueType.BOOLEAN.equals(value_type)) {
 			try {
-				return Boolean.valueOf(internal);
+				return Boolean.valueOf(value);
 			} catch (Exception e) {
 				throw new ValueTypeException(e.getMessage());
 			}
@@ -50,7 +50,7 @@ public class Value {
 	public byte toByte() throws ValueTypeException {
 		if (ValueType.BYTE.equals(value_type)) {
 			try {
-				return Byte.valueOf(internal);
+				return Byte.valueOf(value);
 			} catch (Exception e) {
 				throw new ValueTypeException(e.getMessage());
 			}
@@ -62,7 +62,7 @@ public class Value {
 	public short toShort() throws ValueTypeException {
 		if (value_type.isBetween(ValueType.BYTE, ValueType.SHORT)) {
 			try {
-				return Short.valueOf(internal);
+				return Short.valueOf(value);
 			} catch (Exception e) {
 				throw new ValueTypeException(e.getMessage());
 			}
@@ -74,7 +74,7 @@ public class Value {
 	public int toInt() throws ValueTypeException {
 		if (value_type.isBetween(ValueType.BYTE, ValueType.INT)) {
 			try {
-				return Integer.valueOf(internal);
+				return Integer.valueOf(value);
 			} catch (Exception e) {
 				throw new ValueTypeException(e.getMessage());
 			}
@@ -86,7 +86,7 @@ public class Value {
 	public long toLong() throws ValueTypeException {
 		if (value_type.isBetween(ValueType.BYTE, ValueType.LONG)) {
 			try {
-				return Long.valueOf(internal);
+				return Long.valueOf(value);
 			} catch (Exception e) {
 				throw new ValueTypeException(e.getMessage());
 			}
@@ -98,7 +98,7 @@ public class Value {
 	public float toFloat() throws ValueTypeException {
 		if (value_type.isBetween(ValueType.BYTE, ValueType.FLOAT)) {
 			try {
-				return Float.valueOf(internal);
+				return Float.valueOf(value);
 			} catch (Exception e) {
 				throw new ValueTypeException(e.getMessage());
 			}
@@ -110,7 +110,7 @@ public class Value {
 	public double toDouble() throws ValueTypeException {
 		if (value_type.isBetween(ValueType.BYTE, ValueType.DOUBLE)) {
 			try {
-				return Double.valueOf(internal);
+				return Double.valueOf(value);
 			} catch (Exception e) {
 				throw new ValueTypeException(e.getMessage());
 			}

@@ -5,8 +5,6 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooDefs.Ids;
 
-import com.github.panhongan.util.zookeeper.ZKUtil;
-
 import org.apache.zookeeper.CreateMode;
 
 class MyWatcher implements Watcher {
@@ -35,7 +33,7 @@ public class TestZookeeper {
 		ZooKeeper zk = null;
 		
 		try {
-			zk = ZKUtil.connectZK("localhost:2181,localhost:2182,localhost:2183", 30 * 1000, new MyWatcher());
+			zk = ZKUtils.connectZK("localhost:2181,localhost:2182,localhost:2183", 30 * 1000, new MyWatcher());
 			if (zk != null) {
 				System.out.println("zk connected");
 				
@@ -63,7 +61,7 @@ public class TestZookeeper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			ZKUtil.closeZK(zk);
+			ZKUtils.closeZK(zk);
 		}
 	}
 	

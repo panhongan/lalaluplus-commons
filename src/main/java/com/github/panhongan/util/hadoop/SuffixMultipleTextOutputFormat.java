@@ -3,6 +3,10 @@ package com.github.panhongan.util.hadoop;
 import org.apache.hadoop.mapred.lib.MultipleTextOutputFormat;
 import org.apache.hadoop.io.Text;
 
+/**
+ * lalalu plus
+ */
+
 public class SuffixMultipleTextOutputFormat extends MultipleTextOutputFormat<Text, Text> {
 	
 	private int tagPos = -1;
@@ -51,10 +55,10 @@ public class SuffixMultipleTextOutputFormat extends MultipleTextOutputFormat<Tex
 					
 					return name + "-" + suffix;
 				} else {
-					throw new InvalidSuffixMultipleTextOutputFormatException("InvalidSuffixMultipleTextOutputFormatException : key = " + key.toString() + " , value = " + value.toString());
+					throw new RuntimeException("format exception : key = " + key.toString() + " , value = " + value.toString());
 				}
 			} else {
-				throw new InvalidSuffixMultipleTextOutputFormatException("InvalidSuffixMultipleTextOutputFormatException : key = " + key.toString() + " , value = " + value.toString());
+				throw new RuntimeException("format exception : key = " + key.toString() + " , value = " + value.toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

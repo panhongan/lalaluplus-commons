@@ -1,6 +1,5 @@
 package com.github.panhongan.util.dag;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,37 +7,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 
-import com.github.panhongan.util.StringUtil;
+/**
+ * lalalu plus
+ */
 
 public class DAGTopo {
-	
-	private static Logger logger = LoggerFactory.getLogger(DAGTopo.class);
-	
-	private List<Vertex> vertexs = new ArrayList<Vertex>();
+
+	private List<Vertex> vertexs = new ArrayList<>();
 	
 	public List<Vertex> getVertexs() {
 		return vertexs;
 	}
 	
 	public void addEdge(Vertex from, Vertex to) {
-		if (from == null) {
-			logger.warn("from vertex is null");
-			return;
+		if (from == null || to == null) {
+		    throw new RuntimeException("vertex is null");
 		}
-		if (to == null) {
-			logger.warn("to vertex is null");
-			return;
+
+		if (StringUtils.isEmpty(from.getName())) {
+            throw new RuntimeException("the from vertex name is empty");
 		}
-		if (StringUtil.isEmpty(from.getName())) {
-			logger.warn("the name of from vertex is empty");
-			return;
-		}
-		if (StringUtil.isEmpty(to.getName())) {
-			logger.warn("the name of to vertex is empty");
-			return;
+
+		if (StringUtils.isEmpty(to.getName())) {
+            throw new RuntimeException("the to vertex name is empty");
 		}
 		
 		Vertex fromVertex = this.find(from.getName());
@@ -49,7 +42,8 @@ public class DAGTopo {
 			if (edge == null) {
 				fromVertex.addDownstream(toVertex);
 			} else {
-				logger.warn("edge already exist : {} -> {}", from.getName(), to.getName());
+			    // already exists
+				return;
 			}
 		}else if (fromVertex != null && toVertex == null) {
 			fromVertex.addDownstream(to);
@@ -64,16 +58,15 @@ public class DAGTopo {
 		}
 	}
 	
-	public boolean traverse(List<List<Vertex>> traverse_result) {
+	public boolean traverse(List<List<Vertex>> traverseResult) {
 		boolean ret = false;
 		
-		if (traverse_result == null) {
-			logger.warn("traverse result container is null, no need to traverse");
-			return ret;
+		if (traverseResult == null) {
+			throw new RuntimeException("traverse result container is null, no need to traverse");
 		}
 		
 		// 深度拷贝避免修改原始结构数据，因为遍历过程中会递减入度
-		Map<String, Vertex> cloneVertexs = new HashMap<String, Vertex>();
+		Map<String, Vertex> cloneVertexs = new HashMap<>();
 		for (Vertex v : vertexs) {
 			cloneVertexs.put(v.getName(), Vertex.copy(v));
 		}
@@ -81,7 +74,7 @@ public class DAGTopo {
 		// 按层次遍历
 		int zeroInDegreeVertexCount = 0;
 		int totalVertexCount = vertexs.size();
-		Set<Vertex> set = new HashSet<Vertex>();
+		Set<Vertex> set = new HashSet<>();
 		this.getZeroInDegreeVertex(set);
 		
 		while (true) {
@@ -108,7 +101,7 @@ public class DAGTopo {
 			}
 			
 			if (!list.isEmpty()) {
-				traverse_result.add(list);
+                traverseResult.add(list);
 			}
 			
 			// 继续获取入库为0的顶点
@@ -126,21 +119,16 @@ public class DAGTopo {
 	}
 	
 	public Vertex find(String vertexName) {
-		Vertex v = null;
-		
 		for (Vertex vertex : vertexs) {
 			if (vertex.getName().contentEquals(vertexName)) {
-				v = vertex;
-				break;
+				return vertex;
 			}
 		}
-		
-		return v;
+		return null;
 	}
 	
 	private void getZeroInDegreeVertex(Set<Vertex> set) {
 		set.clear();
-		
 		for (Vertex v : vertexs) {
 			if (v.getInDegree() == 0 && !v.isTraversed()) {
 				set.add(v);
@@ -196,7 +184,7 @@ public class DAGTopo {
 				System.out.println(list.toString());
 			}
 		} else {
-			logger.warn("not a normal dag");
+			System.out.println("not a normal dag");
 		}
 		
 	}

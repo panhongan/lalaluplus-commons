@@ -2,8 +2,8 @@ package com.github.panhongan.util.control;
 
 public interface Freezable {
 	
-	public void freeze();
+	void freeze();
 	
-	public void defreeze();
+	void unfreeze();
 
 }

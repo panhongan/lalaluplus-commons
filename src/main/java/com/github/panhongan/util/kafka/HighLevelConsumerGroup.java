@@ -2,7 +2,7 @@ package com.github.panhongan.util.kafka;
 
 import com.github.panhongan.util.conf.Config;
 import com.github.panhongan.util.control.Lifecycleable;
-import com.github.panhongan.util.zookeeper.ZKUtil;
+import com.github.panhongan.util.zookeeper.ZKUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class HighLevelConsumerGroup implements Lifecycleable {
 		try {
 			if (restart_offset_largest) {
 				String zk_node = KafkaUtil.getConsumerGroupOffsetZKNode(group_id, topic);
-				ZKUtil.deleteNode(zk_list, zk_node);
+				ZKUtils.deleteNode(zk_list, zk_node);
 				logger.info("delete kafka consumer group offset node: {}", zk_node);
 			}
 

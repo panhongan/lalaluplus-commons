@@ -1,36 +1,35 @@
 package com.github.panhongan.util.dag;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * lalalu plus
+ */
 
 public class Edge {
+
+	private Vertex fromVertex;	// 出发顶点
 	
-	private static final Logger logger = LoggerFactory.getLogger(Edge.class);
-	
-	private Vertex from_vertex = null;	// 指向顶点
-	
-	private Vertex to_vertex = null;	// 被指向顶点
+	private Vertex toVertex;	// 被指向顶点
 	
 	public Edge(Vertex from, Vertex to) {
-		this.from_vertex = from;
-		this.to_vertex = to;
+		this.fromVertex = from;
+		this.toVertex = to;
 	}
 	
 	public Vertex getFromVertex() {
-		return from_vertex;
+		return fromVertex;
 	}
 	
 	public Vertex getToVertex() {
-		return to_vertex;
+		return toVertex;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("edge : from = ");
-		sb.append(from_vertex.getName());
+		sb.append(fromVertex.getName());
 		sb.append(", to = ");
-		sb.append(to_vertex.getName());
+		sb.append(toVertex.getName());
 		return sb.toString();
 	}
 	
@@ -38,7 +37,7 @@ public class Edge {
 		Vertex root = new Vertex("root");
 		Vertex a = new Vertex("a");
 		Edge edge = new Edge(root, a);
-		logger.info("copy addr = " + edge.hashCode() + ", " + edge.toString() 
+		System.out.println("copy addr = " + edge.hashCode() + ", " + edge.toString()
 				+ ", from vertex = " + edge.getFromVertex().hashCode() + ", to vertex = " + edge.getToVertex().hashCode());
 		
 		Vertex b = new Vertex("b");

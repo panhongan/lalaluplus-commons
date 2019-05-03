@@ -2,6 +2,7 @@ package com.github.panhongan.util.zookeeper;
 
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
@@ -13,12 +14,12 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 
-import com.github.panhongan.util.path.PathUtil;
-import com.github.panhongan.util.collection.CollectionUtil;
+import com.github.panhongan.util.path.PathUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
-public class ZKUtil {
+public class ZKUtils {
 	
-	private static Logger logger = LoggerFactory.getLogger(ZKUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(ZKUtils.class);
 	
 	public static void waitForConnectionFinished(ZooKeeper zk) {
 		if (zk != null) {
@@ -68,7 +69,7 @@ public class ZKUtil {
 		try {
 			zk = new ZooKeeper(zk_host, timeout, 
 					(watcher != null ? watcher : new EmptyWatcher()));
-			ZKUtil.waitForConnectionFinished(zk);
+			ZKUtils.waitForConnectionFinished(zk);
 			if (zk.getState().isConnected()) {
 				is_ok = true;
 				
@@ -81,7 +82,7 @@ public class ZKUtil {
 		}
 		
 		if (!is_ok) {
-			ZKUtil.closeZK(zk);
+			ZKUtils.closeZK(zk);
 			zk = null;
 		}
 		
@@ -101,11 +102,12 @@ public class ZKUtil {
 	public static boolean createNodeRecursively(ZooKeeper zk, String path, boolean is_persistent) {
 		boolean ret = false;
 
-		List<String> path_list = PathUtil.recursivePathList(path);
-		if (!CollectionUtil.isEmpty(path_list)) {
-			for (int i = 0; i < path_list.size() - 1; ++i) {
+		String[] arr = path.split("/");
+		if (ArrayUtils.isNotEmpty(arr)) {
+		    String str = "/" + arr[0];
+			for (int i = 1; i < arr.length; ++i) {
 				try {
-					zk.create(path_list.get(i), null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+					zk.create(str, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 					ret = true;
 				} catch (Exception e) {
 					if (e instanceof KeeperException.NodeExistsException) {
@@ -120,7 +122,7 @@ public class ZKUtil {
 			
 			if (ret) {
 				try {
-					zk.create(path_list.get(path_list.size() - 1), null, Ids.OPEN_ACL_UNSAFE, 
+					zk.create(str, null, Ids.OPEN_ACL_UNSAFE,
 							(is_persistent ? CreateMode.PERSISTENT : CreateMode.EPHEMERAL));
 					ret = true;
 				} catch (Exception e) {
@@ -144,19 +146,10 @@ public class ZKUtil {
 	}
 	
 	public static void deleteNode(String zk_host, String path) {
-		ZooKeeper zk = ZKUtil.connectZK(zk_host, 30 * 1000, null);
+		ZooKeeper zk = ZKUtils.connectZK(zk_host, 30 * 1000, null);
 		if (zk != null) {
-			ZKUtil.deleteNode(zk, path);
-			ZKUtil.closeZK(zk);
-		}
-	}
-	
-	public static void deleteNodeRecursively(ZooKeeper zk, String path) {
-		List<String> path_list = PathUtil.recursivePathList(path);
-		if (zk != null && !CollectionUtil.isEmpty(path_list)) {
-			for (int i = path_list.size() - 1; i >= 0; --i) {
-				deleteNode(zk, path_list.get(i));
-			}
+			ZKUtils.deleteNode(zk, path);
+			ZKUtils.closeZK(zk);
 		}
 	}
 	

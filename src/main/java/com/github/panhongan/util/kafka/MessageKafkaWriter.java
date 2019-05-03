@@ -2,6 +2,7 @@ package com.github.panhongan.util.kafka;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class MessageKafkaWriter extends AbstractKafkaMessageProcessor implements
 		this.send_topic = dst_topic;
 		this.sync = producer_config.getString("producer.type", "async").contentEquals("sync");
 		
-		if (!StringUtil.isEmpty(send_failed_data_dir)) {
+		if (StringUtils.isNotEmpty(send_failed_data_dir)) {
 			local_writer = new MessageLocalWriter(send_failed_data_dir, 1);
 		}
 	}

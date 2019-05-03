@@ -3,16 +3,17 @@ package com.github.panhongan.util.conf;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.datanucleus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.panhongan.util.StringUtil;
-
+/**
+ * lalalu plus
+ */
 
 public class Config implements Serializable {
 
@@ -20,19 +21,29 @@ public class Config implements Serializable {
 
 	private static Logger logger = LoggerFactory.getLogger(Config.class);
 	
-	private Map<String, String> key_values = new HashMap<String, String>();
-	
-	private boolean parseExec(String conf_file) {
+	private Properties properties = new Properties();
+
+    /**
+     * # : comment line
+     * key1 = value1
+     * key2 = 1
+     * key3 = false
+     * key4 = 1.5
+     *
+     * @param configFile
+     * @return
+     */
+	public boolean parse(String configFile) {
 		boolean ret = false;
 		BufferedReader br = null;
 		
 		try {
-			br = new BufferedReader(new FileReader(conf_file));
+			br = new BufferedReader(new FileReader(configFile));
 
-			String line = null;
+			String line;
 			while ((line = br.readLine()) != null) {
 				line = line.trim();
-				if (StringUtil.isEmpty(line) || line.startsWith("#")) {
+				if (StringUtils.isEmpty(line) || line.startsWith("#")) {
 					continue;
 				}
 				
@@ -40,7 +51,7 @@ public class Config implements Serializable {
 				if (pos != -1) {
 					String key = line.substring(0, pos).trim();
 					String value = line.substring(pos + 1).trim();
-					key_values.put(key, value);
+                    properties.put(key, value);
 				} else {
 					logger.warn("invalid line : {}", line);
 				}
@@ -48,13 +59,13 @@ public class Config implements Serializable {
 			
 			ret = true;
 		} catch (Exception e) {
-			logger.warn(e.getMessage());
+			logger.warn("", e);
 		} finally {
 			if (br != null) {
 				try {
 					br.close();
 				} catch (Exception e) {
-					logger.warn(e.getMessage());
+					logger.warn("", e);
 				}
 			}
 		}
@@ -62,173 +73,128 @@ public class Config implements Serializable {
 		return ret;
 	}
 	
-	public boolean parse(String conf_file) {
-		key_values.clear();
-		return this.parseExec(conf_file);
-	}
-	
-	public boolean parseResourceFile(String resource_file) {
-		key_values.clear();
+	public boolean parseResourceFile(String resourceFile) {
 		boolean ret = false;
-		
-	    Properties prop = new Properties();
-
 	    try {
-	      prop.load(this.getClass().getResourceAsStream(resource_file));
-	      for (Object key : prop.keySet()) {
-	    	  String str_key = (String)key;
-	    	  this.addProperty(str_key, (String)prop.getProperty(str_key));
-	      }
-	      
+	      properties.load(this.getClass().getResourceAsStream(resourceFile));
 	      ret = true;
 	    } catch (Exception e) {
-	      logger.warn(e.getMessage(), e);
+	      logger.warn("", e);
 	    }
-	    
 	    return ret;
-	}
-	
-	public boolean addConf(String conf_file) {
-		return this.parseExec(conf_file);
 	}
 	
 	public void addProperty(String key, String value) {
 		if (key != null && value != null) {
-			key_values.put(key, value);
+			properties.put(key, value);
 		}
 	}
 	
 	public String getString(String key) {
-		return key_values.get(key);
+		return properties.getProperty(key);
 	}
 	
 	public String getString(String key, String defaultVal) {
-		String ret = key_values.get(key);
-		if (ret == null) {
-			ret = defaultVal;
-		}
-		return ret;
+		return properties.getProperty(key, defaultVal);
 	}
 	
 	public short getShort(String key) {
-		return Short.parseShort(key_values.get(key));
+		return Short.valueOf(properties.getProperty(key));
 	}
 	
 	public short getShort(String key, short defaultVal) {
-		short ret = defaultVal;
-		
-		try {
-			ret = Short.parseShort(key_values.get(key));
-		} catch (Exception e) {
-		}
-		
-		return ret;
+	    String value = properties.getProperty(key);
+	    if (value != null) {
+	        return Short.valueOf(value);
+        } else {
+	        return defaultVal;
+        }
 	}
 	
 	public int getInt(String key) {
-		return Integer.parseInt(key_values.get(key));
+		return Integer.valueOf(properties.getProperty(key));
 	}
 	
 	public int getInt(String key, int defaultVal) {
-		int ret = defaultVal;
-		
-		try {
-			ret = Integer.parseInt(key_values.get(key));
-		} catch (Exception e) {
-		}
-		
-		return ret;
+        String value = properties.getProperty(key);
+        if (value != null) {
+            return Integer.valueOf(value);
+        } else {
+            return defaultVal;
+        }
 	}
 	
 	public long getLong(String key) {
-		return Long.parseLong(key_values.get(key));
+		return Long.valueOf(properties.getProperty(key));
 	}
 	
 	public long getLong(String key, long defaultVal) {
-		long ret = defaultVal;
-		
-		try {
-			ret = Long.parseLong(key_values.get(key));
-		} catch (Exception e) {
-		}
-		
-		return ret;
+        String value = properties.getProperty(key);
+        if (value != null) {
+            return Long.valueOf(value);
+        } else {
+            return defaultVal;
+        }
 	}
 	
 	public float getFloat(String key) {
-		return Float.parseFloat(key_values.get(key));
+		return Float.valueOf(properties.getProperty(key));
 	}
 	
 	public float getFloat(String key, float defaultVal) {
-		float ret = defaultVal;
-		
-		try {
-			ret = Float.parseFloat(key_values.get(key));
-		} catch (Exception e) {
-		}
-		
-		return ret;
+        String value = properties.getProperty(key);
+        if (value != null) {
+            return Float.valueOf(value);
+        } else {
+            return defaultVal;
+        }
 	}
 	
 	public double getDouble(String key) {
-		return Double.parseDouble(key_values.get(key));
+		return Double.valueOf(properties.getProperty(key));
 	}
 	
 	public double getDouble(String key, double defaultVal) {
-		double ret = defaultVal;
-		
-		try {
-			ret = Double.parseDouble(key_values.get(key));
-		} catch (Exception e) {
-		}
-		
-		return ret;
+        String value = properties.getProperty(key);
+        if (value != null) {
+            return Double.valueOf(value);
+        } else {
+            return defaultVal;
+        }
 	}
 	
 	public boolean getBoolean(String key) {
-		return Boolean.parseBoolean(key_values.get(key));
+		return Boolean.valueOf(properties.getProperty(key));
 	}
 	
 	public boolean getBoolean(String key, boolean defaultVal) {
-		boolean ret = defaultVal;
-		
-		try {
-			ret = Boolean.parseBoolean(key_values.get(key));
-		} catch (Exception e) {	
-		}
-		
-		return ret;
+        String value = properties.getProperty(key);
+        if (value != null) {
+            return Boolean.valueOf(value);
+        } else {
+            return defaultVal;
+        }
 	}
 	
 	public int size() {
-		return key_values.size();
+		return properties.size();
 	}
 	
 	public boolean isEmpty() {
-		return key_values.isEmpty();
+		return properties.isEmpty();
 	}
+
+	public boolean isNotEmpty() {
+	    return !isEmpty();
+    }
 	
 	public Set<String> keySet() {
-		return key_values.keySet();
+		return properties.keySet().stream().map(x -> (String) x).collect(Collectors.toSet());
 	}
 	
 	@Override
 	public String toString() {
-		int i = 0;
-		StringBuffer sb = new StringBuffer();
-		sb.append("Map: [");
-		for (String key : key_values.keySet()) {
-			sb.append(key);
-			sb.append(" = ");
-			sb.append(key_values.get(key));
-			
-			if (++i < key_values.size()) {
-				sb.append(", ");
-			}
-		}
-		sb.append("]");
-		
-		return sb.toString();
+	    return properties.toString();
 	}
 
 }

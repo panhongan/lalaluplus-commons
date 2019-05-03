@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.panhongan.util.conf.Config;
-import com.github.panhongan.util.zookeeper.ZKUtil;
+import com.github.panhongan.util.zookeeper.ZKUtils;
 
 public class KafkaUtil {
 
@@ -242,7 +242,7 @@ public class KafkaUtil {
 		boolean is_alive = false;
 		
 		try {
-			ZooKeeper zk = ZKUtil.connectZK(zk_list, 10 * 1000, null);
+			ZooKeeper zk = ZKUtils.connectZK(zk_list, 10 * 1000, null);
 			is_alive = !zk.getChildren("/brokers/ids", false).isEmpty();
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);

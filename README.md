@@ -1,3 +1,2 @@
-# java-utils
-# author: panhongan
-java utils
+lalaluplus java commons
+# author: lalalu plus (phadyc@126.com)
