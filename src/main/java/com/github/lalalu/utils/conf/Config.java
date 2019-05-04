@@ -23,15 +23,12 @@ public class Config implements Serializable {
 	
 	private Properties properties = new Properties();
 
-    /**
+    /*
      * # : comment line
      * key1 = value1
      * key2 = 1
      * key3 = false
      * key4 = 1.5
-     *
-     * @param configFile
-     * @return
      */
 	public boolean parse(String configFile) {
 		boolean ret = false;

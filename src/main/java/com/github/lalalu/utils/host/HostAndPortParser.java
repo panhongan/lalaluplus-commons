@@ -15,9 +15,9 @@ public class HostAndPortParser {
 
     /**
      * @param uri  ip:port,ip:port,ip:port
-     * @return
+     * @return host and port list
      */
-	public static List<HostAndPort> parse(String uri) throws Exception {
+	public static List<HostAndPort> parse(String uri) {
 		try {
 			String [] arr = uri.split("[,]");
 			if (ArrayUtils.isNotEmpty(arr)) {
@@ -34,7 +34,7 @@ public class HostAndPortParser {
 		}
 	}
 
-    public static List<redis.clients.jedis.HostAndPort> parseRedisHost(String uri) throws Exception {
+    public static List<redis.clients.jedis.HostAndPort> parseRedisHost(String uri) {
         try {
             String [] arr = uri.split("[,]");
             if (ArrayUtils.isNotEmpty(arr)) {
