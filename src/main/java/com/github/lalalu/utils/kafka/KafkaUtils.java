@@ -57,9 +57,9 @@ public class KafkaUtils {
 		try {
 			List<String> broker_hosts = new ArrayList<String>();
 			int port = DEFAULT_PORT;
-			String [] arr = broker_list.split("[,]");
+			String[] arr = broker_list.split("[,]");
 			for (int i = 0; i < arr.length; ++i) {
-				String [] host_port = arr[i].split("[:]");
+				String[] host_port = arr[i].split("[:]");
 				broker_hosts.add(host_port[0]);
 				port = Integer.valueOf(host_port[1]);
 			}
@@ -135,7 +135,7 @@ public class KafkaUtils {
 	}
 
 	public static List<PartitionMetadata> findTopicPartitionMetadata(List<String> broker_hosts, int port,
-			String topic) {
+	                                                                 String topic) {
 		List<PartitionMetadata> partition_metadata_list = null;
 
 		TopicMetadata topic_metadata = KafkaUtils.findTopicMetadata(broker_hosts, port, topic);
@@ -147,7 +147,7 @@ public class KafkaUtils {
 	}
 
 	public static PartitionMetadata findTopicPartitionMetadata(List<String> broker_hosts, int port, String topic,
-			int partition) {
+	                                                           int partition) {
 		PartitionMetadata partition_meta_data = null;
 
 		List<PartitionMetadata> partition_metadata_list = KafkaUtils.findTopicPartitionMetadata(broker_hosts, port,
@@ -175,7 +175,7 @@ public class KafkaUtils {
 
 	public static Producer<String, String> createProducer(Config producer_config) {
 		Properties props = new Properties();
-		
+
 		props.put("bootstrap.servers", producer_config.getString("bootstrap.servers"));
 		props.put("metadata.broker.list", producer_config.getString("bootstrap.servers"));
 		props.put("zookeeper.connect", producer_config.getString("zookeeper.connect"));
@@ -201,7 +201,7 @@ public class KafkaUtils {
 
 	public static boolean sendSync(Producer<String, String> producer, String topic, String message) {
 		boolean ret = false;
-		
+
 		try {
 			RecordMetadata result = producer.send(new ProducerRecord<String, String>(topic, message)).get();
 			logger.info("kafka producer send result : " + result);
@@ -209,10 +209,10 @@ public class KafkaUtils {
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		}
-		
+
 		return ret;
 	}
-	
+
 	public static void sendAsync(Producer<String, String> producer, String topic, String message, Callback callback) {
 		try {
 			producer.send(new ProducerRecord<String, String>(topic, message), callback);
@@ -239,24 +239,24 @@ public class KafkaUtils {
 	public static String getConsumerGroupOffsetZKNode(String groupid, String topic) {
 		return "/consumers/" + groupid + "/offsets/" + topic;
 	}
-	
+
 	public static boolean isKafkaClusterAlive(String zk_list) {
 		boolean is_alive = false;
-		
+
 		try {
 			ZooKeeper zk = ZkUtils.connectZK(zk_list, 10 * 1000, null);
 			is_alive = !zk.getChildren("/brokers/ids", false).isEmpty();
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
 		}
-		
+
 		return is_alive;
 	}
-	
+
 	public static void createTargetTopics(String topic, int partitions, int replicas, String zk_list) {
 		ZkClient zkClient = null;
 		kafka.utils.ZkUtils zkUtils = null;
-		
+
 		try {
 			zkClient = new ZkClient(zk_list, 15 * 1000, 10 * 1000, ZKStringSerializer$.MODULE$);
 			zkUtils = new kafka.utils.ZkUtils(zkClient, new ZkConnection(zk_list), false);
@@ -267,7 +267,7 @@ public class KafkaUtils {
 			if (zkClient != null) {
 				zkClient.close();
 			}
-			
+
 			if (zkUtils != null) {
 				zkUtils.close();
 			}

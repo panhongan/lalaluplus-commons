@@ -17,8 +17,8 @@ public class TestConfig {
 		config1.addProperty("age", "123");
 		config1.addProperty("money", "12345");
 		System.out.println(config1.getString("name"));
-        System.out.println(config1.getInt("age", 0));
-        System.out.println(config1.getLong("money", 0));
-    }
+		System.out.println(config1.getInt("age", 0));
+		System.out.println(config1.getLong("money", 0));
+	}
 
 }

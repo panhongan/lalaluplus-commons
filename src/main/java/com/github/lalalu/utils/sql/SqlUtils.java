@@ -18,7 +18,7 @@ public class SqlUtils {
 			}
 		}
 	}
-	
+
 	public static void closeStatement(Statement stmt) {
 		if (stmt != null) {
 			try {
@@ -28,13 +28,13 @@ public class SqlUtils {
 			}
 		}
 	}
-	
+
 	public static void closeResultSet(ResultSet rs) {
 		if (rs != null) {
 			try {
 				rs.close();
 			} catch (Exception e) {
-			    // do nothing
+				// do nothing
 			}
 		}
 	}

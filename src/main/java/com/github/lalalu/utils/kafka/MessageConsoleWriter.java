@@ -12,7 +12,7 @@ public class MessageConsoleWriter extends AbstractKafkaMessageProcessor {
 		System.out.println(topic + "_" + partition_id + " : " + message);
 		return true;
 	}
-	
+
 	@Override
 	public Object processMessage(String topic, int partition_id, List<String> msg_list) {
 		for (String message : msg_list) {

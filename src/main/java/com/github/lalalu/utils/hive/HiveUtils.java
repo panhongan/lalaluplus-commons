@@ -31,14 +31,14 @@ public class HiveUtils {
 			throw new RuntimeException("parse config file failed : " + jdbcConfFile);
 		}
 	}
-	
+
 	public static HiveSession createHiveSession(String jdbcConfFile, Config hiveConf, boolean isNew) throws SQLException {
 		Config conf = new Config();
 		if (conf.parse(jdbcConfFile)) {
 			return HiveUtils.createHiveSession(conf, hiveConf, isNew);
 		} else {
-            throw new RuntimeException("parse config file failed : " + jdbcConfFile);
-        }
+			throw new RuntimeException("parse config file failed : " + jdbcConfFile);
+		}
 	}
 
 	public static HiveSession createHiveSession(Config jdbcConfig, Config hiveConf, boolean isNew) throws SQLException {
@@ -51,7 +51,7 @@ public class HiveUtils {
 			session.close();
 		}
 	}
-	
+
 	public static Connection createHiveConnection(String url, Properties p) throws SQLException {
 		return new HiveConnection(url, p);
 	}
@@ -65,13 +65,13 @@ public class HiveUtils {
 	public static boolean validateHiveConfig(Config config) {
 		boolean ok = false;
 		HiveSession session = null;
-		
+
 		try {
 			session = HiveUtils.createHiveSession(config, null, true);
 			String sql = "show databases";
 			ResultSet rs = session.executeQuery(sql);
 			if (rs.next()) {
-                ok = true;
+				ok = true;
 			}
 			SqlUtils.closeResultSet(rs);
 		} catch (Exception e) {
@@ -85,7 +85,7 @@ public class HiveUtils {
 
 	// hive 0.11.0(包含)以后的版本
 	// jdbc:hive2://<host>:<port>/dbName;sess_var_list?hiveConf_list#hive_var_list
-	
+
 	// hive 0.11.0之前的版本
 	// jdbc:hive://<host>:<port>/dbName;sess_var_list?hiveConf_list#hive_var_list
 	public static String getJdbcUrl(Config jdbcConfig, Config sessionConfig, Config hiveConf, Config hiveVar, boolean isNew) {
@@ -100,13 +100,13 @@ public class HiveUtils {
 		str += jdbcConfig.getString("sql.port");
 		str += "/";
 		str += jdbcConfig.getString("sql.db");
-		
+
 		if (sessionConfig == null) {
-            sessionConfig = new Config();
-            sessionConfig.addProperty("user", jdbcConfig.getString("sql.user"));
-            sessionConfig.addProperty("password", jdbcConfig.getString("sql.password"));
+			sessionConfig = new Config();
+			sessionConfig.addProperty("user", jdbcConfig.getString("sql.user"));
+			sessionConfig.addProperty("password", jdbcConfig.getString("sql.password"));
 		}
-		
+
 		// session_config
 		if (sessionConfig != null && sessionConfig.isNotEmpty()) {
 			str += ";";

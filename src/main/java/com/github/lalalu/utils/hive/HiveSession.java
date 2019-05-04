@@ -16,25 +16,25 @@ import com.google.common.base.Preconditions;
 public class HiveSession implements Closeable {
 
 	private Connection conn;
-	
+
 	private Statement stmt;
-	
+
 	public HiveSession(Connection connection) throws SQLException {
 		this.conn = connection;
 		Preconditions.checkNotNull(conn);
 
 		stmt = conn.createStatement();
-        Preconditions.checkNotNull(stmt);
+		Preconditions.checkNotNull(stmt);
 	}
-	
+
 	public ResultSet executeQuery(String sql) throws SQLException {
-        return stmt.executeQuery(sql);
-    }
-	
+		return stmt.executeQuery(sql);
+	}
+
 	public boolean executeUpdate(String sql) throws SQLException {
 		return (stmt.executeUpdate(sql) >= 0);
 	}
-	
+
 	public boolean execute(String sql) throws SQLException {
 		return stmt.execute(sql);
 	}

@@ -32,9 +32,9 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageProcessor {
 	private List<ArrayBlockingQueue<Message>> queues = new ArrayList<ArrayBlockingQueue<Message>>();
 
 	private AbstractMessageHandler handler = null;
-	
+
 	private MessageKafkaWriter kafka_writer = null;
-	
+
 	private KafkaMessageServiceConfig config = null;
 
 	private Random random = new Random();
@@ -136,10 +136,10 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageProcessor {
 		try {
 			ArrayBlockingQueue<Message> queue = queues.get(queue_index);
 			queue.put(new Message(topic, partition_id, message));
-			
+
 			// 1/20 to check the queue
 			if (random.nextInt(100) <= 5) {
-				logger.info("{}_{}_queue_{} :  queue_size = {}", topic, partition_id, queue_index, queue.size()); 
+				logger.info("{}_{}_queue_{} :  queue_size = {}", topic, partition_id, queue_index, queue.size());
 			}
 		} catch (Exception e) {
 			logger.warn(e.getMessage(), e);
@@ -160,7 +160,7 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageProcessor {
 	}
 
 	private class Message {
-		
+
 		public String topic = null;
 
 		public int partition_id = -1;
@@ -175,15 +175,15 @@ public class KafkaMessageWorkflow extends AbstractKafkaMessageProcessor {
 	}
 
 	public class InnerMessageProcessor extends ControllableThread {
-		
+
 		private AbstractMessageHandler handler = null;
 
 		private MessageKafkaWriter kafka_writer = null;
 
 		private ArrayBlockingQueue<Message> queue = null;
-		
+
 		public InnerMessageProcessor(AbstractMessageHandler handler, ArrayBlockingQueue<Message> queue,
-				MessageKafkaWriter kafka_writer) {
+		                             MessageKafkaWriter kafka_writer) {
 			this.handler = handler;
 			this.queue = queue;
 			this.kafka_writer = kafka_writer;

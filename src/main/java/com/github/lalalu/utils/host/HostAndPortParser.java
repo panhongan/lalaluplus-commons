@@ -13,15 +13,15 @@ import com.google.common.net.HostAndPort;
 
 public class HostAndPortParser {
 
-    /**
-     * @param uri  ip:port,ip:port,ip:port
-     * @return host and port list
-     */
+	/**
+	 * @param uri ip:port,ip:port,ip:port
+	 * @return host and port list
+	 */
 	public static List<HostAndPort> parse(String uri) {
 		try {
-			String [] arr = uri.split("[,]");
+			String[] arr = uri.split("[,]");
 			if (ArrayUtils.isNotEmpty(arr)) {
-                List<HostAndPort> list = new ArrayList<>();
+				List<HostAndPort> list = new ArrayList<>();
 				for (int i = 0; i < arr.length; ++i) {
 					list.add(HostAndPort.fromString(arr[i]));
 				}
@@ -34,22 +34,22 @@ public class HostAndPortParser {
 		}
 	}
 
-    public static List<redis.clients.jedis.HostAndPort> parseRedisHost(String uri) {
-        try {
-            String [] arr = uri.split("[,]");
-            if (ArrayUtils.isNotEmpty(arr)) {
-                List<redis.clients.jedis.HostAndPort> list = new ArrayList<>();
-                for (int i = 0; i < arr.length; ++i) {
-                    HostAndPort hostAndPort = HostAndPort.fromString(arr[i]);
-                    list.add(new redis.clients.jedis.HostAndPort(hostAndPort.getHostText(), hostAndPort.getPort()));
-                }
-                return list;
-            } else {
-                throw new RuntimeException("Invalid URI : " + uri);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid URI : " + uri);
-        }
-    }
+	public static List<redis.clients.jedis.HostAndPort> parseRedisHost(String uri) {
+		try {
+			String[] arr = uri.split("[,]");
+			if (ArrayUtils.isNotEmpty(arr)) {
+				List<redis.clients.jedis.HostAndPort> list = new ArrayList<>();
+				for (int i = 0; i < arr.length; ++i) {
+					HostAndPort hostAndPort = HostAndPort.fromString(arr[i]);
+					list.add(new redis.clients.jedis.HostAndPort(hostAndPort.getHostText(), hostAndPort.getPort()));
+				}
+				return list;
+			} else {
+				throw new RuntimeException("Invalid URI : " + uri);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Invalid URI : " + uri);
+		}
+	}
 
 }

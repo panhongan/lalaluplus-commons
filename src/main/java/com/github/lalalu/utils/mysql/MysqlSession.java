@@ -15,9 +15,9 @@ import com.google.common.base.Preconditions;
 public class MysqlSession {
 
 	private Connection conn;
-	
+
 	private Statement stmt;
-	
+
 	public MysqlSession(Connection connection) throws SQLException {
 		this.conn = connection;
 		Preconditions.checkNotNull(conn);
@@ -26,19 +26,19 @@ public class MysqlSession {
 				ResultSet.CONCUR_UPDATABLE);
 		Preconditions.checkNotNull(stmt);
 	}
-	
+
 	public ResultSet executeQuery(String sql) throws SQLException {
 		return stmt.executeQuery(sql);
 	}
-	
+
 	public boolean executeUpdate(String sql) throws SQLException {
 		return (stmt.executeUpdate(sql) >= 0);
 	}
-	
+
 	public boolean execute(String sql) throws SQLException {
 		return stmt.execute(sql);
 	}
-	
+
 	public void close() {
 		SqlUtils.closeStatement(stmt);
 		SqlUtils.closeConnection(conn);

@@ -12,8 +12,8 @@ import redis.clients.util.Pool;
  */
 
 public class TestJedisUtils {
-	
-	public static void main(String [] args) {
+
+	public static void main(String[] args) {
 		Config config = new Config();
 		if (config.parse("conf/redis.properties")) {
 			System.out.println(config.toString());
@@ -21,7 +21,7 @@ public class TestJedisUtils {
 			System.err.println("parse conf file failed");
 			return;
 		}
-		
+
 		Pool<Jedis> pool = JedisUtils.createJedisPool(config);
 		if (pool != null) {
 			try {
@@ -31,12 +31,12 @@ public class TestJedisUtils {
 				if (list != null) {
 					System.out.println(list.toString());
 				}
-				
+
 				JedisUtils.returnSource(pool, jedis, true);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			JedisUtils.closeJedisPool(pool);
 		}
 	}

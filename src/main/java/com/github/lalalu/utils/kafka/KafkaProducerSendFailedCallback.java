@@ -9,15 +9,15 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 public class KafkaProducerSendFailedCallback implements Callback {
 
 	private MessageLocalWriter local_writer = null;
-	
+
 	private String topic = null;
-	
+
 	private String message = null;
-	
+
 	private int partition_id = 0;
-	
-	public KafkaProducerSendFailedCallback(MessageLocalWriter local_writer, 
-			String topic, int partition_id, String message) {
+
+	public KafkaProducerSendFailedCallback(MessageLocalWriter local_writer,
+	                                       String topic, int partition_id, String message) {
 		this.local_writer = local_writer;
 		this.topic = topic;
 		this.message = message;

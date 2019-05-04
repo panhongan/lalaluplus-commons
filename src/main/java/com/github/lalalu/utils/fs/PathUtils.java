@@ -9,16 +9,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 
 public class PathUtils {
-	
+
 	public static String absolutePath(String path) {
 		if (StringUtils.isNotEmpty(path)) {
 			File file = new File(path);
 			return file.getAbsolutePath();
 		} else {
-		    return null;
-        }
+			return null;
+		}
 	}
-	
+
 	public static void createRecursiveDir(String dir) {
 		try {
 			File file = new File(dir);
@@ -26,7 +26,7 @@ public class PathUtils {
 				file.mkdirs();
 			}
 		} catch (Exception e) {
-		    throw new RuntimeException(e);
+			throw new RuntimeException(e);
 		}
 	}
 

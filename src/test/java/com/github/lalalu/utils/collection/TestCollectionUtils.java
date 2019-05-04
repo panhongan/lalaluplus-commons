@@ -7,9 +7,9 @@ import java.util.Arrays;
  */
 public class TestCollectionUtils {
 
-    public static void main(String[] args) {
-        System.out.println(CollectionUtils.join(Arrays.asList(1, 2, 3, "a"), "."));
-        System.out.println(CollectionUtils.join(Arrays.asList(1, 2, 3, 4), ";"));
-    }
+	public static void main(String[] args) {
+		System.out.println(CollectionUtils.join(Arrays.asList(1, 2, 3, "a"), "."));
+		System.out.println(CollectionUtils.join(Arrays.asList(1, 2, 3, 4), ";"));
+	}
 
 }

@@ -11,6 +11,6 @@ package com.github.lalalu.utils.function;
 @FunctionalInterface
 public interface ThrowableFunction<I, O, T extends Throwable> {
 
-    O apply(I input) throws T;
+	O apply(I input) throws T;
 
 }

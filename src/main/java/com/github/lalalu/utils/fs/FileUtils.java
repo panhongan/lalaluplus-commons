@@ -14,50 +14,50 @@ import java.util.function.Consumer;
 
 public class FileUtils {
 
-    public static List<String> readFile(String filePath) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            List<String> list = new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                list.add(line);
-            }
-            return list;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public static List<String> readFile(String filePath) {
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+			List<String> list = new ArrayList<>();
+			String line;
+			while ((line = br.readLine()) != null) {
+				list.add(line);
+			}
+			return list;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static void readFile(String filePath, Consumer<String> consumer) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                consumer.accept(line);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public static void readFile(String filePath, Consumer<String> consumer) {
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				consumer.accept(line);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static String readFileAsString(String filePath) {
-        FileInputStream input = null;
+	public static String readFileAsString(String filePath) {
+		FileInputStream input = null;
 
-        try {
-            File file = new File(filePath);
-            byte[] bytes = new byte[(int) file.length()];
-            input = new FileInputStream(file);
-            input.read(bytes);
-            return new String(bytes);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
-        }
-    }
+		try {
+			File file = new File(filePath);
+			byte[] bytes = new byte[(int) file.length()];
+			input = new FileInputStream(file);
+			input.read(bytes);
+			return new String(bytes);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+		}
+	}
 
 }

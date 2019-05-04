@@ -18,16 +18,16 @@ import com.google.common.base.Preconditions;
 
 public class PersistentWatcher {
 
-    private static Logger logger = LoggerFactory.getLogger(PersistentWatcher.class);
+	private static Logger logger = LoggerFactory.getLogger(PersistentWatcher.class);
 
-    private static final int DEFAULT_WATCH_INTERVAL_MILLSECONDS = 1000;
+	private static final int DEFAULT_WATCH_INTERVAL_MILLSECONDS = 1000;
 
-    private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+	private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
 	private ZooKeeper zk;
-	
+
 	private String path;
-	
+
 	private Collection<Watcher> watchers;
 
 	public PersistentWatcher(ZooKeeper zk, String path, Collection<Watcher> watchers) {
@@ -35,24 +35,24 @@ public class PersistentWatcher {
 		this.path = path;
 		this.watchers = watchers;
 
-        Preconditions.checkNotNull(zk);
-        Preconditions.checkNotNull(path);
-        Preconditions.checkNotNull(watchers);
+		Preconditions.checkNotNull(zk);
+		Preconditions.checkNotNull(path);
+		Preconditions.checkNotNull(watchers);
 
-        executorService.scheduleWithFixedDelay(this::doWatch,
-                DEFAULT_WATCH_INTERVAL_MILLSECONDS,
-                DEFAULT_WATCH_INTERVAL_MILLSECONDS,
-                TimeUnit.MILLISECONDS);
+		executorService.scheduleWithFixedDelay(this::doWatch,
+				DEFAULT_WATCH_INTERVAL_MILLSECONDS,
+				DEFAULT_WATCH_INTERVAL_MILLSECONDS,
+				TimeUnit.MILLISECONDS);
 	}
-	
+
 	private void doWatch() {
 		try {
-		    for (Watcher watcher : watchers) {
-                zk.exists(path, watcher);
-            }
+			for (Watcher watcher : watchers) {
+				zk.exists(path, watcher);
+			}
 		} catch (Exception e) {
 			logger.warn("", e);
 		}
 	}
-	
+
 }

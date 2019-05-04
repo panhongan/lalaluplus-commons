@@ -20,22 +20,22 @@ public class KafkaMessageService implements Lifecycleable {
 	private static final Logger logger = LoggerFactory.getLogger(KafkaMessageService.class);
 
 	private List<AbstractKafkaMessageProcessor> workFlows = new ArrayList<>();
-	
+
 	private KafkaMessageServiceConfig config = null;
 
 	private HighLevelConsumerGroup group = null;
-	
+
 	private MessageKafkaWriter kafka_writer = null;
-	
+
 	private AbstractMessageHandler handler = null;
-	
+
 	/**
 	 * @param handler should invoke init() succeed
 	 */
 	public void setMessageHandler(AbstractMessageHandler handler) {
 		this.handler = handler;
 	}
-	
+
 	public void setConfig(KafkaMessageServiceConfig config) {
 		this.config = config;
 	}
@@ -49,7 +49,7 @@ public class KafkaMessageService implements Lifecycleable {
 		}
 
 		Config conf = config.getConfig();
-		
+
 		Config producer_config = new Config();
 		producer_config.addProperty("bootstrap.servers", conf.getString("dst.kafka.broker.list"));
 		producer_config.addProperty("zookeeper.connect", conf.getString("dst.kafka.zk.list"));
@@ -65,7 +65,7 @@ public class KafkaMessageService implements Lifecycleable {
 			logger.warn("property not exist : {}", "src.kafka.topic.partition");
 			return is_ok;
 		}
-		
+
 		String[] arr = topic_partition.split(":");
 		if (arr != null && arr.length == 2) {
 			String topic = arr[0];
@@ -90,7 +90,7 @@ public class KafkaMessageService implements Lifecycleable {
 
 			group = new HighLevelConsumerGroup(conf.getString("src.kafka.zk.list"),
 					conf.getString("src.kafka.consumer.group"), topic, partitions,
-					conf.getBoolean("src.kafka.consumer.restart.offset.largest", false), 
+					conf.getBoolean("src.kafka.consumer.restart.offset.largest", false),
 					workFlows);
 			is_ok = group.init();
 			if (is_ok) {
@@ -114,15 +114,15 @@ public class KafkaMessageService implements Lifecycleable {
 			processor.uninit();
 			logger.info("MessageProcessor uninit : {}", processor.getName());
 		}
-		
+
 		if (kafka_writer != null) {
 			kafka_writer.uninit();
 			logger.info("MessageKafkaWriter uninit");
 		}
-		
+
 		if (handler != null) {
 			handler.uninit();
 		}
 	}
-	
+
 }

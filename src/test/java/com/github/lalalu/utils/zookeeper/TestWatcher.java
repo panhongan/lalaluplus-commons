@@ -7,9 +7,9 @@ import org.apache.zookeeper.Watcher;
  * lalalu plus
  */
 public class TestWatcher implements Watcher {
-	
+
 	private String path;
-	
+
 	public TestWatcher(String path) {
 		this.path = path;
 	}
@@ -18,7 +18,7 @@ public class TestWatcher implements Watcher {
 	public void process(WatchedEvent event) {
 		if (event.getPath() != null) {
 			System.out.println("znode = " + event.getPath());
-			
+
 			if (event.getPath().contentEquals(path)) {
 				if (event.getType() == Watcher.Event.EventType.NodeDeleted) {
 					System.out.println("node deleted");
@@ -27,9 +27,9 @@ public class TestWatcher implements Watcher {
 				} else {
 					System.out.println("other event");
 				}
-			}			
+			}
 		}
 	}
-	
+
 }
 

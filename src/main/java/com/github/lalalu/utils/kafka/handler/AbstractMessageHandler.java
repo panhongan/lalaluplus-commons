@@ -9,9 +9,9 @@ import com.github.lalalu.utils.control.Lifecycleable;
  * lalalu plus
  */
 public abstract class AbstractMessageHandler implements Lifecycleable {
-	
+
 	public abstract Map<String, List<String>> handle(String str);
-	
+
 	public abstract Object clone();
-	
+
 }

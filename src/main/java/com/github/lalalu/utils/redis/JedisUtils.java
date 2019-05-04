@@ -25,9 +25,9 @@ import redis.clients.util.Pool;
 
 public class JedisUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(JedisUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(JedisUtils.class);
 
-    public void createShardedJedisPool(String redis_infos) {
+	public void createShardedJedisPool(String redis_infos) {
 		/* broken window (will be used)
 		 * 
 		// shard info
@@ -54,163 +54,163 @@ public class JedisUtils {
 			}
 		}
 		*/
-    }
+	}
 
-    // one HostAndPort is ok
-    public static JedisCluster createJedisCluster(Config conf) {
-        try {
-            Set<HostAndPort> nodes = new HashSet<>();
-            for (HostAndPort hostAndPort : HostAndPortParser.parseRedisHost(conf.getString("redis.servers"))) {
-                nodes.add(hostAndPort);
-            }
+	// one HostAndPort is ok
+	public static JedisCluster createJedisCluster(Config conf) {
+		try {
+			Set<HostAndPort> nodes = new HashSet<>();
+			for (HostAndPort hostAndPort : HostAndPortParser.parseRedisHost(conf.getString("redis.servers"))) {
+				nodes.add(hostAndPort);
+			}
 
-            return new JedisCluster(nodes);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+			return new JedisCluster(nodes);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static JedisCluster createJedisCluster(String redisConfFile) {
-        Config conf = new Config();
-        if (conf.parse(redisConfFile)) {
-            return JedisUtils.createJedisCluster(conf);
-        } else {
-            throw new RuntimeException("parse redis config file failed : " + redisConfFile);
-        }
-    }
+	public static JedisCluster createJedisCluster(String redisConfFile) {
+		Config conf = new Config();
+		if (conf.parse(redisConfFile)) {
+			return JedisUtils.createJedisCluster(conf);
+		} else {
+			throw new RuntimeException("parse redis config file failed : " + redisConfFile);
+		}
+	}
 
-    public static Jedis createJedis(Config conf) {
-        try {
-            List<HostAndPort> nodes = HostAndPortParser.parseRedisHost(conf.getString("redis.servers"));
-            Jedis jedis = new Jedis(nodes.get(0).getHost(), nodes.get(0).getPort());
-            String passwd = conf.getString("redis.password");
-            if (StringUtils.isNotEmpty(passwd)) {
-                jedis.auth(passwd);
-            }
+	public static Jedis createJedis(Config conf) {
+		try {
+			List<HostAndPort> nodes = HostAndPortParser.parseRedisHost(conf.getString("redis.servers"));
+			Jedis jedis = new Jedis(nodes.get(0).getHost(), nodes.get(0).getPort());
+			String passwd = conf.getString("redis.password");
+			if (StringUtils.isNotEmpty(passwd)) {
+				jedis.auth(passwd);
+			}
 
-            jedis.connect();
-            return jedis;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+			jedis.connect();
+			return jedis;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static Jedis createJedis(String redisConfFile) {
-        Config conf = new Config();
-        if (conf.parse(redisConfFile)) {
-            return JedisUtils.createJedis(conf);
-        } else {
-            throw new RuntimeException("parse config file failed : " + redisConfFile);
-        }
-    }
+	public static Jedis createJedis(String redisConfFile) {
+		Config conf = new Config();
+		if (conf.parse(redisConfFile)) {
+			return JedisUtils.createJedis(conf);
+		} else {
+			throw new RuntimeException("parse config file failed : " + redisConfFile);
+		}
+	}
 
-    public static Pool<Jedis> createJedisPool(Config conf) {
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(conf.getInt("jedis.pool.max.resources", 100));
-        config.setMaxIdle(conf.getInt("jedis.pool.max.idle", 40));
-        config.setMaxWaitMillis(conf.getInt("jedis.pool.get_resource.timeout", 10 * 1000));
-        config.setTestOnBorrow(true);
+	public static Pool<Jedis> createJedisPool(Config conf) {
+		JedisPoolConfig config = new JedisPoolConfig();
+		config.setMaxTotal(conf.getInt("jedis.pool.max.resources", 100));
+		config.setMaxIdle(conf.getInt("jedis.pool.max.idle", 40));
+		config.setMaxWaitMillis(conf.getInt("jedis.pool.get_resource.timeout", 10 * 1000));
+		config.setTestOnBorrow(true);
 
-        Pool<Jedis> pool = null;
+		Pool<Jedis> pool = null;
 
-        try {
-            List<HostAndPort> nodes = HostAndPortParser.parseRedisHost(conf.getString("redis.servers"));
-            String redis_passwd = conf.getString("redis.password");
-            int connection_timeout = conf.getInt("redis.connection.timeout", 10 * 1000);
-            if (StringUtils.isEmpty(redis_passwd)) {
-                pool = new JedisPool(config, nodes.get(0).getHost(), nodes.get(0).getPort(), connection_timeout);
-            } else {
-                pool = new JedisPool(config, nodes.get(0).getHost(), nodes.get(0).getPort(), connection_timeout, redis_passwd);
-            }
+		try {
+			List<HostAndPort> nodes = HostAndPortParser.parseRedisHost(conf.getString("redis.servers"));
+			String redis_passwd = conf.getString("redis.password");
+			int connection_timeout = conf.getInt("redis.connection.timeout", 10 * 1000);
+			if (StringUtils.isEmpty(redis_passwd)) {
+				pool = new JedisPool(config, nodes.get(0).getHost(), nodes.get(0).getPort(), connection_timeout);
+			} else {
+				pool = new JedisPool(config, nodes.get(0).getHost(), nodes.get(0).getPort(), connection_timeout, redis_passwd);
+			}
 
-            if (!JedisUtils.validatePool(pool)) {
-                JedisUtils.closeJedisPool(pool);
-                throw new RuntimeException("pool is invalid");
-            }
-            return pool;
-        } catch (Exception e) {
-            JedisUtils.closeJedisPool(pool);
-            throw new RuntimeException(e);
-        }
-    }
+			if (!JedisUtils.validatePool(pool)) {
+				JedisUtils.closeJedisPool(pool);
+				throw new RuntimeException("pool is invalid");
+			}
+			return pool;
+		} catch (Exception e) {
+			JedisUtils.closeJedisPool(pool);
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static Pool<Jedis> createJedisPool(String redisConfFile) {
-        Config conf = new Config();
-        if (conf.parse(redisConfFile)) {
-            return JedisUtils.createJedisPool(conf);
-        } else {
-            throw new RuntimeException("parse redis config file failed : " + redisConfFile);
-        }
-    }
+	public static Pool<Jedis> createJedisPool(String redisConfFile) {
+		Config conf = new Config();
+		if (conf.parse(redisConfFile)) {
+			return JedisUtils.createJedisPool(conf);
+		} else {
+			throw new RuntimeException("parse redis config file failed : " + redisConfFile);
+		}
+	}
 
-    public static void returnSource(Pool<Jedis> pool, Jedis jedis, boolean isOk) {
-        if (pool != null && jedis != null) {
-            try {
-                if (isOk) {
-                    pool.returnResource(jedis);
-                } else {
-                    pool.returnBrokenResource(jedis);
-                }
-            } catch (Exception e) {
-                logger.error("", e);
-            }
-        }
-    }
+	public static void returnSource(Pool<Jedis> pool, Jedis jedis, boolean isOk) {
+		if (pool != null && jedis != null) {
+			try {
+				if (isOk) {
+					pool.returnResource(jedis);
+				} else {
+					pool.returnBrokenResource(jedis);
+				}
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+		}
+	}
 
-    public static void returnSource(Pool<ShardedJedis> pool, ShardedJedis jedis, boolean isOk) {
-        if (pool != null && jedis != null) {
-            try {
-                if (isOk) {
-                    pool.returnResource(jedis);
-                } else {
-                    pool.returnBrokenResource(jedis);
-                }
-            } catch (Exception e) {
-                logger.error("", e);
-            }
-        }
-    }
+	public static void returnSource(Pool<ShardedJedis> pool, ShardedJedis jedis, boolean isOk) {
+		if (pool != null && jedis != null) {
+			try {
+				if (isOk) {
+					pool.returnResource(jedis);
+				} else {
+					pool.returnBrokenResource(jedis);
+				}
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+		}
+	}
 
-    public static boolean validatePool(Pool<Jedis> pool) {
-        try {
-            Jedis jedis = pool.getResource();
-            boolean ret = (jedis != null);
-            returnSource(pool, jedis, ret);
-            return ret;
-        } catch (Exception e) {
-            logger.error("", e);
-            return false;
-        }
-    }
+	public static boolean validatePool(Pool<Jedis> pool) {
+		try {
+			Jedis jedis = pool.getResource();
+			boolean ret = (jedis != null);
+			returnSource(pool, jedis, ret);
+			return ret;
+		} catch (Exception e) {
+			logger.error("", e);
+			return false;
+		}
+	}
 
-    public static void closeJedis(Jedis jedis) {
-        if (jedis != null) {
-            try {
-                jedis.disconnect();
-            } catch (Exception e) {
-                logger.error("", e);
-            }
-        }
-    }
+	public static void closeJedis(Jedis jedis) {
+		if (jedis != null) {
+			try {
+				jedis.disconnect();
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+		}
+	}
 
-    public static void closeJedisCluster(JedisCluster jedisCluster) {
-        if (jedisCluster != null) {
-            try {
-                jedisCluster.close();
-            } catch (Exception e) {
-                logger.error("", e);
-            }
-        }
-    }
+	public static void closeJedisCluster(JedisCluster jedisCluster) {
+		if (jedisCluster != null) {
+			try {
+				jedisCluster.close();
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+		}
+	}
 
-    public static void closeJedisPool(Pool<Jedis> pool) {
-        if (pool != null) {
-            try {
-                pool.close();
-            } catch (Exception e) {
-                logger.error("", e);
-            }
-        }
-    }
+	public static void closeJedisPool(Pool<Jedis> pool) {
+		if (pool != null) {
+			try {
+				pool.close();
+			} catch (Exception e) {
+				logger.error("", e);
+			}
+		}
+	}
 
 }

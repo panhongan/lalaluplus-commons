@@ -11,11 +11,11 @@ import com.github.lalalu.utils.kafka.handler.KafkaMessageService;
  * lalalu plus
  */
 public class TestKafkaMessageHandlerService {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(TestKafkaMessageHandlerService.class);
-	
+
 	private static final String CLASS_NAME = TestKafkaMessageHandlerService.class.getSimpleName();
-	
+
 	public static void usage() {
 		System.out.println(CLASS_NAME + "<conf_file>");
 	}
@@ -47,7 +47,7 @@ public class TestKafkaMessageHandlerService {
 			logger.warn("converter init failed");
 			return;
 		}
-		
+
 		// init service
 		KafkaMessageService service = new KafkaMessageService();
 		service.setMessageHandler(converter);
