@@ -8,7 +8,7 @@ import org.junit.Test;
 public class ValueTest {
 
     @Test (expected = IllegalArgumentException.class)
-	public void testToBoolean_TypeException() {
+    public void testToBoolean_TypeException() {
         Value value = new Value("true", Value.ValueType.STRING);
         value.toBoolean();
     }
