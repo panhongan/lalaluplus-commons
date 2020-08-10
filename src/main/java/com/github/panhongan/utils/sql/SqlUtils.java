@@ -1,12 +1,18 @@
 package com.github.panhongan.utils.sql;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
 /**
- * lalalu plus
+ * @author lalalu plus
+ * @since 2017.7.10
+ * @version 1.0
  */
+
+@Slf4j
 public class SqlUtils {
 
 	public static void closeConnection(Connection conn) {
@@ -14,7 +20,7 @@ public class SqlUtils {
 			try {
 				conn.close();
 			} catch (Exception e) {
-				// do nothing
+				log.warn("", e);
 			}
 		}
 	}
@@ -24,7 +30,7 @@ public class SqlUtils {
 			try {
 				stmt.close();
 			} catch (Exception e) {
-				// do nothing
+                log.warn("", e);
 			}
 		}
 	}
@@ -34,9 +40,8 @@ public class SqlUtils {
 			try {
 				rs.close();
 			} catch (Exception e) {
-				// do nothing
+                log.warn("", e);
 			}
 		}
 	}
-
 }

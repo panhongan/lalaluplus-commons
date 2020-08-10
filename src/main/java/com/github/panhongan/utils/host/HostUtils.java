@@ -1,7 +1,6 @@
 package com.github.panhongan.utils.host;
 
 import javax.annotation.Nonnull;
-
 import java.net.InetAddress;
 import java.util.function.Supplier;
 
@@ -29,7 +28,7 @@ public class HostUtils {
 			InetAddress host = InetAddress.getLocalHost();
 			return (host != null ? host.getHostName() : null);
 		} catch (Throwable t) {
-			return null;
+			throw new RuntimeException(t);
 		}
 	}
 
@@ -37,8 +36,7 @@ public class HostUtils {
 		try {
 			return InetAddress.getByName(getHostName()).getHostAddress();
 		} catch (Throwable t) {
-			return null;
+            throw new RuntimeException(t);
 		}
 	}
-
 }

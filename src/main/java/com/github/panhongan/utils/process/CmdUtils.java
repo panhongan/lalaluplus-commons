@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.apache.commons.collections4.CollectionUtils;
 
 /**
- * lalalu plus
+ * @author lalalu plus
+ * @since 2017.7.10
+ * @version 1.0
  */
 
 public class CmdUtils {
@@ -73,5 +75,4 @@ public class CmdUtils {
 
 		return ret;
 	}
-
 }

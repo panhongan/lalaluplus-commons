@@ -30,7 +30,7 @@ public class HostAndPortParser {
 				throw new RuntimeException("Invalid URI : " + uri);
 			}
 		} catch (Exception e) {
-			throw new RuntimeException("Invalid URI : " + uri);
+			throw new RuntimeException("Invalid URI : " + uri, e);
 		}
 	}
 }
