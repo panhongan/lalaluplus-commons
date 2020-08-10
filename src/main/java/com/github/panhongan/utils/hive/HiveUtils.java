@@ -25,20 +25,14 @@ public class HiveUtils {
 
 	public static HiveSession createHiveSession(String jdbcConfFile, boolean isNew) throws SQLException {
 		Config conf = new Config();
-		if (conf.parse(jdbcConfFile)) {
-			return HiveUtils.createHiveSession(conf, null, isNew);
-		} else {
-			throw new RuntimeException("parse config file failed : " + jdbcConfFile);
-		}
+		conf.parse(jdbcConfFile);
+        return HiveUtils.createHiveSession(conf, null, isNew);
 	}
 
 	public static HiveSession createHiveSession(String jdbcConfFile, Config hiveConf, boolean isNew) throws SQLException {
 		Config conf = new Config();
-		if (conf.parse(jdbcConfFile)) {
-			return HiveUtils.createHiveSession(conf, hiveConf, isNew);
-		} else {
-			throw new RuntimeException("parse config file failed : " + jdbcConfFile);
-		}
+		conf.parse(jdbcConfFile);
+		return HiveUtils.createHiveSession(conf, hiveConf, isNew);
 	}
 
 	public static HiveSession createHiveSession(Config jdbcConfig, Config hiveConf, boolean isNew) throws SQLException {
@@ -52,8 +46,12 @@ public class HiveUtils {
 		}
 	}
 
-	public static Connection createHiveConnection(String url, Properties p) throws SQLException {
-		return new HiveConnection(url, p);
+	public static Connection createHiveConnection(String url, Properties p) {
+	    try {
+            return new HiveConnection(url, p);
+        } catch (Exception e) {
+	        throw new RuntimeException(e);
+        }
 	}
 
 	public static boolean validateHiveConfig(String hiveConfFile) {
@@ -145,5 +143,4 @@ public class HiveUtils {
 
 		return str;
 	}
-
 }

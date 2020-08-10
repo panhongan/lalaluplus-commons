@@ -21,7 +21,8 @@ public class KafkaExporterConfig {
 	}
 
 	public boolean parse(String confFile) {
-		return config.parse(confFile);
+		config.parse(confFile);
+		return true;
 	}
 
 	public Config getConfig() {

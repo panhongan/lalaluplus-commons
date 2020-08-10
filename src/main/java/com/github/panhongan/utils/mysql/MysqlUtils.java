@@ -33,11 +33,8 @@ public class MysqlUtils {
 
 	public static MysqlPool createMysqlPool(String confFile) {
 		Config conf = new Config();
-		if (conf.parse(confFile)) {
-			return MysqlUtils.createMysqlPool(conf);
-		} else {
-			throw new RuntimeException("parse mysql config file failed" + confFile);
-		}
+		conf.parse(confFile);
+		return MysqlUtils.createMysqlPool(conf);
 	}
 
 	public static void closeMysqlPool(MysqlPool pool) {
@@ -68,11 +65,8 @@ public class MysqlUtils {
 
 	public static MysqlSession createMysqlSession(String confFile) throws SQLException {
 		Config conf = new Config();
-		if (conf.parse(confFile)) {
-			return MysqlUtils.createMysqlSession(conf);
-		} else {
-			throw new RuntimeException("parse mysql config file failed : " + confFile);
-		}
+		conf.parse(confFile);
+		return MysqlUtils.createMysqlSession(conf);
 	}
 
 	public static MysqlSession createMysqlSession(Config conf) throws SQLException {
@@ -182,5 +176,4 @@ public class MysqlUtils {
 			return ok;
 		}
 	}
-
 }

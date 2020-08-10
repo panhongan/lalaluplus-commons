@@ -18,10 +18,7 @@ public class TestMessageLocalWriterGroup {
 		// local.data.dir, zk.list, kafka.consumer.group
 		String conf_file = "../conf/kafka.properties";
 		Config config = new Config();
-		if (!config.parse(conf_file)) {
-			logger.warn("parse conf file failed : {}", conf_file);
-			return;
-		}
+		config.parse(conf_file);
 
 		logger.info(config.toString());
 

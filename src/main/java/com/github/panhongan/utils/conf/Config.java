@@ -30,9 +30,7 @@ public class Config implements Serializable {
 	 * key3 = false
 	 * key4 = 1.5
 	 */
-	public boolean parse(String configFile) {
-		boolean ret = false;
-
+	public void parse(String configFile) {
 		try (BufferedReader br = new BufferedReader(new FileReader(configFile))) {
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -50,23 +48,17 @@ public class Config implements Serializable {
 					logger.warn("invalid line : {}", line);
 				}
 			}
-			ret = true;
 		} catch (Exception e) {
-			logger.warn("", e);
+			throw new RuntimeException(e);
 		}
-
-		return ret;
 	}
 
-	public boolean parseResourceFile(String resourceFile) {
-		boolean ret = false;
+	public void parseResourceFile(String resourceFile) {
 		try {
 			properties.load(this.getClass().getResourceAsStream(resourceFile));
-			ret = true;
 		} catch (Exception e) {
-			logger.warn("", e);
+			throw new RuntimeException(e);
 		}
-		return ret;
 	}
 
 	public void addProperty(String key, String value) {
@@ -181,5 +173,4 @@ public class Config implements Serializable {
 	public String toString() {
 		return properties.toString();
 	}
-
 }

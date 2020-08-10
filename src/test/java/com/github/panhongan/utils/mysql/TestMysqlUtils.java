@@ -14,14 +14,9 @@ public class TestMysqlUtils {
 
 	public static void main(String[] args) {
 		Config config = new Config();
-		if (config.parse("conf/mysql.properties")) {
-			System.out.println(config.toString());
-
-			System.out.println(MysqlUtils.getJDBCUrl(config));
-		} else {
-			System.err.println("parse conf file failed");
-			return;
-		}
+		config.parse("conf/mysql.properties");
+		System.out.println(config.toString());
+		System.out.println(MysqlUtils.getJDBCUrl(config));
 
 		MysqlUtils.MysqlPool pool = MysqlUtils.createMysqlPool(config);
 		if (pool != null) {

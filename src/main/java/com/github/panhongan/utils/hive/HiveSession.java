@@ -44,6 +44,5 @@ public class HiveSession implements Closeable {
 		SqlUtils.closeStatement(stmt);
 		SqlUtils.closeConnection(conn);
 	}
-
 }
  
