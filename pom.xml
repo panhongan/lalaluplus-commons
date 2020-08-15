@@ -4,7 +4,7 @@
 
     <groupId>com.github.panhongan</groupId>
     <artifactId>lalaluplus-commons</artifactId>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -15,7 +15,7 @@
     </properties>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>lalalu plus java commons</description>
+    <description>lalaluplus java commons</description>
     <url>https://github.com/panhongan/lalaluplus-commons</url>
 
     <licenses>
@@ -146,27 +146,9 @@
         </dependency>
 
         <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>2.7.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.37</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.10</artifactId>
-            <version>0.9.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>0.9.0.0</version>
+            <groupId>net.sf.oval</groupId>
+            <artifactId>oval</artifactId>
+            <version>1.86</version>
         </dependency>
 
         <dependency>
@@ -179,12 +161,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.13</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
-            <version>3.4.6</version>
         </dependency>
 
         <dependency>
@@ -212,28 +188,9 @@
         </dependency>
 
         <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.hive</groupId>
-            <artifactId>hive-jdbc</artifactId>
-            <version>2.3.4</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.10.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.davidmoten</groupId>
-            <artifactId>geo</artifactId>
-            <version>0.7.6</version>
         </dependency>
 
         <dependency>
