@@ -6,6 +6,9 @@
     <artifactId>lalaluplus-commons</artifactId>
     <version>0.1.10</version>
     <packaging>jar</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>lalaluplus java commons</description>
+    <url>https://github.com/panhongan/lalaluplus-commons</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -13,10 +16,6 @@
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <name>${project.groupId}:${project.artifactId}</name>
-    <description>lalaluplus java commons</description>
-    <url>https://github.com/panhongan/lalaluplus-commons</url>
 
     <licenses>
         <license>
@@ -152,9 +151,9 @@
         </dependency>
 
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.13.3</version>
         </dependency>
 
         <dependency>
