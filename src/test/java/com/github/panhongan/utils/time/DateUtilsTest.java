@@ -12,18 +12,28 @@ import java.util.Date;
 
 public class DateUtilsTest {
 
-    @Test (expected = NullPointerException.class)
+    @Test
     public void testFormat_DateIsNull() {
         DateUtils.format(null, "");
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test
     public void testFormat_PatternIsEmpty() {
         DateUtils.format(new Date(), "");
     }
 
     @Test
     public void testFormat_Ok() {
-        assert (DateUtils.format(new Date(), DateUtils.SETTLE_PATTERN) != null);
+        assert(DateUtils.format(new Date(), DateUtils.SETTLE_PATTERN) != null);
+    }
+
+    @Test
+    public void testDate2timestamp_Ok() {
+        assert(DateUtils.date2timestamp(new Date()) > 0L);
+    }
+
+    @Test
+    public void testTimestamp2date_Ok() {
+        System.out.println(DateUtils.timestamp2date(0L));
     }
 }

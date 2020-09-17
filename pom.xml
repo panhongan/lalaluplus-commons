@@ -4,7 +4,7 @@
 
     <groupId>com.github.panhongan</groupId>
     <artifactId>lalaluplus-commons</artifactId>
-    <version>0.1.10</version>
+    <version>0.1.11</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>lalaluplus java commons</description>
@@ -80,7 +80,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
