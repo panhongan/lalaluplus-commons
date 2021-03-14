@@ -36,4 +36,9 @@ public class DateUtilsTest {
     public void testTimestamp2date_Ok() {
         System.out.println(DateUtils.timestamp2date(0L));
     }
+
+    @Test
+    public void testPlusDaysFromNow_Ok() {
+        assert (DateUtils.plusDaysFromNow(0) != null);
+    }
 }

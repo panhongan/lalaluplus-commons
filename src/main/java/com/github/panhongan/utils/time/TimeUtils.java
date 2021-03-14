@@ -4,14 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * lalalu plus
+ * @author panhongan
+ * @since 2020.7.13
+ * @version 1.0
  */
 
 public class TimeUtils {
 
-	/**
-	 * @return Seconds
-	 */
 	public static long currTime() {
 		return System.currentTimeMillis() / 1000;
 	}

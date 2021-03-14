@@ -4,12 +4,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 
 /**
- * lalalu plus
+ * @author panhongan
+ * @since 2020.7.13
+ * @version 1.0
  */
+
 public class DateUtils {
 
     public static final String SETTLE_PATTERN = "yyyy-MM-dd HH:mm:ss";
@@ -49,5 +54,9 @@ public class DateUtils {
     public static Date timestamp2date(long seconds, long nanos) {
         Instant instant = Instant.ofEpochSecond(seconds, nanos);
         return Date.from(instant);
+    }
+
+    public static Date plusDaysFromNow(int days) {
+        return Date.from(LocalDate.now().plusDays(days).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }
