@@ -1,18 +1,17 @@
 package com.github.panhongan.utils.reflect;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * @author panhongan
- * @since 2019.7.13
  * @version 1.0
+ * @since 2019.7.13
  */
 
 public class ReflectUtils {
@@ -22,15 +21,24 @@ public class ReflectUtils {
     private static Map<String, Class> classMap = new ConcurrentHashMap<>();
 
 
+    /**
+     * @param c Class
+     * @return Fields for @param c
+     */
     public static Collection<Field> getClassBeanFieldFast(Class c) {
         Collection<Field> fields = classFieldsMap.get(c);
         if (fields != null) {
             return fields;
         }
 
-        return classFieldsMap.computeIfAbsent(c, k -> getAllFields(k));
+        return classFieldsMap.computeIfAbsent(c, ReflectUtils::getAllFields);
     }
 
+    /**
+     * @param className Class name
+     * @return Class object for className
+     * @throws Exception Any Exception
+     */
     public static Class getClassFast(String className) throws Exception {
         Class c = classMap.get(className);
         if (c != null) {
@@ -42,6 +50,7 @@ public class ReflectUtils {
         return c;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T newInstance(Class<T> c) throws Exception {
         return (T) getClassFast(c.getName()).newInstance();
     }
@@ -55,9 +64,9 @@ public class ReflectUtils {
             if (ArrayUtils.isNotEmpty(arr)) {
                 for (Field field : arr) {
                     int modifier = field.getModifiers();
-                    if (modifier == Modifier.PRIVATE ||
-                            modifier == Modifier.PROTECTED ||
-                            modifier == Modifier.PUBLIC) {
+                    if (modifier == Modifier.PRIVATE
+                            || modifier == Modifier.PROTECTED
+                            || modifier == Modifier.PUBLIC) {
                         field.setAccessible(true);
                         fields.add(field);
                     }
@@ -69,21 +78,4 @@ public class ReflectUtils {
 
         return fields;
     }
-
-    /*
-    public static void setField(Object obj, Field field, String fieldName, String fieldType) {
-        //ThrowableConsumer consumer = fieldSetterConsumer.get(Tuple3.of(obj,field, ));
-        Object obj1 = null;
-        //field.set(obj, obj1);
-
-    }
-
-    public static final ThrowableConsumer<Tuple3<String, Field, Integer>, Throwable> INTEGER_FIELD_SETTER = tuple -> tuple._2.set(tuple._1, tuple._3);
-
-
-    public static Map<String, ThrowableConsumer> fieldSetterConsumer = new HashMap<>();
-
-    static {
-        fieldSetterConsumer.put(Integer.class.getTypeName(), INTEGER_FIELD_SETTER);
-    }*/
 }

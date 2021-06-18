@@ -3,7 +3,8 @@ package com.github.panhongan.utils;
 import org.junit.Test;
 
 /**
- * lalalu plus
+ * @author lalalu plus
+ * @since 2018.6.7
  */
 public class ValueTest {
 

@@ -1,10 +1,11 @@
 package com.github.panhongan.utils.process;
 
 /**
- * lalalu plus
+ * @author lalalu plus
+ * @since 2019.8.3
  */
 
-public class TestProcessUtils {
+public class ProcessUtilsTest {
 
 	public static void main(String[] args) {
 		for (int i = 0; i < 100; i++) {
@@ -20,5 +21,4 @@ public class TestProcessUtils {
 		System.out.println(ProcessUtils.getMainName());
 		System.out.println(ProcessUtils.getCmdOptions());
 	}
-
 }

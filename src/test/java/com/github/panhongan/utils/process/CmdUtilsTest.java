@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * lalalu plus
+ * @author lalalu plus
+ * @since 2017.6.7
  */
 
-public class TestCmdUtils {
+public class CmdUtilsTest {
 
 	public static void main(String[] args) {
 		List<String> output = new ArrayList<>();

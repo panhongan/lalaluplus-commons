@@ -7,7 +7,6 @@ import org.junit.Test;
 /**
  * @author panhongan
  * @since 2019.7.14
- * @version 1.0
  */
 
 public class ObjectUtilsTest {

@@ -1,4 +1,4 @@
-package com.github.panhongan.utils.time;
+package com.github.panhongan.utils.datetime;
 
 import org.junit.Test;
 
@@ -11,7 +11,6 @@ import java.util.Objects;
 /**
  * @author panhongan
  * @since 2019.7.13
- * @version 1.0
  */
 public class DateUtilsTest {
 
@@ -21,8 +20,8 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void testTimestamp2date_Ok() {
-        System.out.println(DateUtils.timestamp2date(0L));
+    public void testMillseconds2date_Ok() {
+        System.out.println(DateUtils.millseconds2date(0L));
     }
 
     @Test

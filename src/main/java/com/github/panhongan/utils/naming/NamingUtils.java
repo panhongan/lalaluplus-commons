@@ -54,7 +54,8 @@ public class NamingUtils {
 
             for (int i = 1; i < arr.length; ++i) {
                 char ch = arr[i].charAt(0);
-                builder.append(Character.toUpperCase(ch) + arr[i].substring(1));
+                builder.append(Character.toUpperCase(ch));
+                builder.append(arr[i].substring(1));
             }
 
             return builder.toString();
