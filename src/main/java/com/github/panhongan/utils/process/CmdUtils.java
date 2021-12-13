@@ -18,11 +18,29 @@ public class CmdUtils {
 
     /**
      * @param cmd Command lines
+     *            cmd: <cmd1>; <cmd2>; <cmd3>; ...
      * @param output Output for executing
      * @param err Error Information for executing
      * @return True if succeed. Else False
      */
-    public static boolean exec(String[] cmd, Collection<String> output, Collection<String> err) {
+    public static boolean execShellCmd(String cmd, Collection<String> output, Collection<String> err) {
+        boolean ret = false;
+
+        String[] arr = new String[] {"bash", "-c", cmd};
+
+        try {
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec(arr);
+            ret = readData(process, output, err);
+        } catch (Exception e) {
+            logger.warn(e.getMessage());
+            err.add(e.getMessage());
+        }
+
+        return ret;
+    }
+
+    public static boolean execNonShellCmd(String cmd, Collection<String> output, Collection<String> err) {
         boolean ret = false;
 
         try {

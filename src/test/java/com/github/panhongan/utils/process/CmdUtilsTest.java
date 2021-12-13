@@ -1,5 +1,7 @@
 package com.github.panhongan.utils.process;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,15 +12,19 @@ import java.util.List;
 
 public class CmdUtilsTest {
 
-	public static void main(String[] args) {
+	@Test
+	public void testExecShellCmd() {
 		List<String> output = new ArrayList<>();
 		List<String> err = new ArrayList<>();
-		boolean ret = CmdUtils.exec(new String[]{"python", "1.py"}, output, err);
-		if (ret) {
-			System.out.println(output.toString());
-		} else {
-			System.out.println(err.toString());
-		}
+		boolean ret = CmdUtils.execShellCmd("cd ./; ls -l ./", output, err);
+		assert (ret);
 	}
 
+	@Test
+	public void testExecNonShellCmd() {
+		List<String> output = new ArrayList<>();
+		List<String> err = new ArrayList<>();
+		boolean ret = CmdUtils.execNonShellCmd("python src/test/python/1.py", output, err);
+		assert (ret);
+	}
 }
