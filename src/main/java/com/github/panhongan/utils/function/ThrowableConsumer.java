@@ -7,6 +7,7 @@ package com.github.panhongan.utils.function;
  * @param <I> Input
  * @param <T> Throwable
  */
+
 @FunctionalInterface
 public interface ThrowableConsumer<I, T extends Throwable> {
 

@@ -1,10 +1,13 @@
 package com.github.panhongan.utils.dag;
 
+import lombok.Getter;
+
 /**
  * @author lalalu plus
  * @since 2017.5.6
  */
 
+@Getter
 public class Edge {
 
     private final Vertex fromVertex;    // 出发顶点
@@ -14,14 +17,6 @@ public class Edge {
     public Edge(Vertex from, Vertex to) {
         this.fromVertex = from;
         this.toVertex = to;
-    }
-
-    public Vertex getFromVertex() {
-        return fromVertex;
-    }
-
-    public Vertex getToVertex() {
-        return toVertex;
     }
 
     @Override

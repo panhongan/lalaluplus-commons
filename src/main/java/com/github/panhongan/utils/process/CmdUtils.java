@@ -17,8 +17,7 @@ public class CmdUtils {
     private static final Logger logger = LoggerFactory.getLogger(CmdUtils.class);
 
     /**
-     * @param cmd Command lines
-     *            cmd: <cmd1>; <cmd2>; <cmd3>; ...
+     * @param cmd cmd1;cmd2;cmd3; ...
      * @param output Output for executing
      * @param err Error Information for executing
      * @return True if succeed. Else False

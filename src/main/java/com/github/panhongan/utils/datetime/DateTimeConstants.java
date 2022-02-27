@@ -34,5 +34,4 @@ public class DateTimeConstants {
     public static final int THIRTY_DAYS_SEC = ONE_DAY_SEC * 30;
 
     public static final int NINETY_DAYS_SEC = ONE_DAY_SEC * 90;
-
 }

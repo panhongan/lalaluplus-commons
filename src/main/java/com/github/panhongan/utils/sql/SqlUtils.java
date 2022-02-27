@@ -3,7 +3,8 @@ package com.github.panhongan.utils.sql;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author lalalu plus
@@ -11,8 +12,9 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2017.7.10
  */
 
-@Slf4j
 public class SqlUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(SqlUtils.class);
 
     /**
      * @param conn Connection
@@ -22,7 +24,7 @@ public class SqlUtils {
             try {
                 conn.close();
             } catch (Exception e) {
-                log.warn("", e);
+                logger.warn("", e);
             }
         }
     }
@@ -35,7 +37,7 @@ public class SqlUtils {
             try {
                 stmt.close();
             } catch (Exception e) {
-                log.warn("", e);
+                logger.warn("", e);
             }
         }
     }
@@ -48,7 +50,7 @@ public class SqlUtils {
             try {
                 rs.close();
             } catch (Exception e) {
-                log.warn("", e);
+                logger.warn("", e);
             }
         }
     }

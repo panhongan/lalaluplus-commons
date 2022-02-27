@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author lalalu plus
@@ -17,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 
 public class DagTopology {
+
+    private static final Logger logger = LoggerFactory.getLogger(DagTopology.class);
 
     private List<Vertex> vertexList = new ArrayList<>();
 
@@ -49,6 +53,9 @@ public class DagTopology {
                 Edge edge = fromVertex.findEdge(to.getName());
                 if (Objects.nonNull(edge)) {
                     fromVertex.addDownstream(toVertex);
+                } else {
+                    logger.warn("Impossible path, from = {}, to = {}",
+                            fromVertex.getName(), toVertex.getName());
                 }
             } else {
                 fromVertex.addDownstream(to);

@@ -4,16 +4,17 @@
 
     <groupId>com.github.panhongan</groupId>
     <artifactId>lalaluplus-commons</artifactId>
-    <version>1.1</version>
+    <version>1.4</version>
     <packaging>jar</packaging>
-    <name>${project.groupId}:${project.artifactId}</name>
+
+    <name>lalaluplus-commons</name>
     <description>lalaluplus java commons</description>
     <url>https://github.com/panhongan/lalaluplus-commons</url>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.compilerVersion>8</maven.compiler.compilerVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -112,6 +113,8 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
+                    <source>${maven.compiler.source}</source>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
                 <executions>
                     <execution>

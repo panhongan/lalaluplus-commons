@@ -150,5 +150,4 @@ public class Vertex {
         vertex.edges = v.edges;
         return vertex;
     }
-
 }
